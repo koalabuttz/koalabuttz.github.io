@@ -10,17 +10,11 @@
 			<link rel="stylesheet" type="text/css" href="w3.css">
 			<link rel="stylesheet" type="text/css" href="w3-theme-teal.css">
 			<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-			<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+			<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
 
 	<style type="text/css">
-		
-		
-		.w3-meep {
-			font-family: Helvetica, Arial, sans-serif;
-		}
 		/* Create a Parallax Effect */
-		
-		.bg__foo {
+		.hero-background {
 			height: 100vh;
 			/* fix background */
 			background-attachment: fixed;
@@ -30,35 +24,55 @@
 			background-size: cover;
 			background-image: url(mountains-low.jpg);
 		}
-		
-		.ugh {
-			width: 500px
+
+		.modal-image {
+			width: 500px;
 		}
+
+		.nowrap {
+			white-space: nowrap;
+		}
+
+		.text-left {
+			text-align: left;
+		}
+
+		.inline-list-item {
+			display: inline;
+			border-bottom: none;
+		}
+
+		.section-height-large {
+			height: 850px;
+		}
+
+		.section-height-small {
+			height: 50px;
+		}
+
 		/* Turn off parallax scrolling for tablets and mobiles */
-		
 		@media only screen and (max-width: 1024px) {
-			.bg__foo {
+			.hero-background {
 				background-attachment: scroll;
 				height: 50vh;
 			}
-			.ugh {
-				width: 50px
+			.modal-image {
+				width: 50px;
 			}
 		}
 	</style>
 </head>
 
-<div class="parallax w3-display-container">
-	<div class="bg__foo "></div>
-	<div class="w3-container w3-row">
-		<div class="w3-display-middle w3-opacity" style="white-space:nowrap;">
-			<span class="w3-center w3-padding-xlarge w3-black w3-xlarge w3-wide w3-animate-opacity">Welcome</span>
-						<span class="w3-center w3-padding-xlarge w3-black w3-xlarge w3-wide w3-animate-opacity">&#65516;</span>
+<body class="w3-white w3-animate-opacity">
 
+<div class="parallax w3-display-container">
+	<div class="hero-background"></div>
+	<div class="w3-container w3-row">
+		<div class="w3-display-middle w3-opacity nowrap">
+			<span class="w3-center w3-padding-xlarge w3-black w3-xlarge w3-wide w3-animate-opacity">Welcome</span>
+			<span class="w3-center w3-padding-xlarge w3-black w3-xlarge w3-wide w3-animate-opacity">&#65516;</span>
 		</div>
 	</div>
-
-	<body class="w3-white  w3-animate-opacity">
 
 		<div class="w3-container w3-theme-d2 w3-text-shadow">
 
@@ -84,15 +98,16 @@
 				<div class="w3-margin"><img class="w3-circle w3-card-4" width="33%" src="linkedin.jpeg" alt="avatar"></div>
 
 				<ul class="w3-ul w3-center w3-margin-bottom">
-
-					<li style="display:inline; border-bottom: none">
+					<li class="inline-list-item">
 						<a href="https://www.instagram.com/david.godlewski/" target="_blank"><img src="instagram_white.svg" alt="instagram" width="40px" class="w3-hover-opacity w3-circle w3-card-2"></a>
 					</li>
-					<li style="display:inline; border-bottom: none">
+					<li class="inline-list-item">
 						<a href="https://twitter.com/koalabuttz" target="_blank"><img src="twitter_white.svg" alt="twitter" width="40px" class="w3-hover-opacity w3-circle w3-card-2"></a>
 					</li>
-					<li style="display:inline; border-bottom: none"><img src="snapchat_white.svg" onclick="document.getElementById('modal01').style.display='block'" alt="snapchat" width="40px" class="w3-hover-opacity w3-image w3-circle w3-card-2"></li>
-				<li style="display:inline; border-bottom: none">
+					<li class="inline-list-item">
+						<img src="snapchat_white.svg" id="snapchat-trigger" alt="snapchat" width="40px" class="w3-hover-opacity w3-image w3-circle w3-card-2">
+					</li>
+					<li class="inline-list-item">
 						<a href="https://www.linkedin.com/in/DavidLewisGodlewski/" target="_blank"><img src="linkedin.svg" alt="Linkedin" width="40px" class="w3-hover-opacity w3-circle w3-card-2"></a>
 					</li>
 				</ul>
@@ -101,10 +116,9 @@
 
 			<div class="w3-left w3-col s12 m12 l8">
 				<h2 class="w3-margin w3-left">About me</h2>
-				<!-- <p class="w3-margin w3-left" style="text-align:left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur enim sem, vestibulum luctus consequat sed, imperdiet et sem. Sed in dui vel risus placerat ornare eget a leo. Sed interdum sollicitudin nisi eu vulputate. Nunc porttitor, purus et bibendum tincidunt, ligula nulla consequat quam, at lobortis mauris magna sed dolor.</p>
--->
-				<p class="w3-margin w3-left" style="text-align:left">
-					I’m a proud Jack-of-all-trades. I recently graduated from the University of Central Florida with a Bachelor’s in Political Science. The knowledge and wisdom I gained from my studies lies beneath all my problem-solving processes - but my professional expertise is in tech. I’m passionate about Cybersecurity, IT infrastructure, and building great things. I have various foundational technical experience with Windows and Linux systems, working with virtual machines, administration with Terraform and Ansible, etc., but regardless what piece of technology we’re talking about, I have a passion for taking what I have learned and building up others so they can succeed as well.				</p>
+				<p class="w3-margin w3-left text-left">
+					I'm a proud Jack-of-all-trades. I recently graduated from the University of Central Florida with a Bachelor's in Political Science. The knowledge and wisdom I gained from my studies lies beneath all my problem-solving processes - but my professional expertise is in tech. I'm passionate about Cybersecurity, IT infrastructure, and building great things. I have various foundational technical experience with Windows and Linux systems, working with virtual machines, administration with Terraform and Ansible, etc., but regardless what piece of technology we're talking about, I have a passion for taking what I have learned and building up others so they can succeed as well.
+				</p>
 			</div>
 		</div>
 
@@ -122,29 +136,14 @@
 
 	<div class="w3-row">
 
-	<div class="w3-half w3-container w3-center w3-theme-d5" style="height:850px">
-		
-			<div class="">
-				<h2 class="w3-row">
-				Projects
-			</h2>
-			</div>
-			
-			<!--<div class="w3-row">
-				<iframe width="560" height="315" class="w3-padding w3-center" style="width:75%" src="https://www.youtube.com/embed/5kQ_LsE2WKA" frameborder="0" allowfullscreen></iframe>
-				<iframe width="560" height="315" class="w3-padding w3-center" style="width:75%" src="https://www.youtube.com/embed/6DdYoYl-WHQ" frameborder="0" allowfullscreen></iframe>
-			</div>-->
-		
-
-
-
-
+	<div class="w3-half w3-container w3-center w3-theme-d5 section-height-large">
+		<div>
+			<h2 class="w3-row">Projects</h2>
+		</div>
 	</div>
 
-	<div class="w3-half w3-container w3-center w3-dark-grey" style="height:850px">
-		<h1>
-				Get in touch
-			</h1>
+	<div class="w3-half w3-container w3-center w3-dark-grey section-height-large">
+		<h1>Get in touch</h1>
 		<div class="w3-padding-64">
 
 			<p>Don't be a stranger! <br> I've linked my socials above - LinkedIn is the best way to get in touch with me. <br> Otherwise, here's my email! I look forward to hearing from you.</p>
@@ -156,12 +155,9 @@
 
 <!-- Footer beginning-->
 	<div class="w3-row">
-		<div class="w3-container w3-center w3-black" style="height:50px">
-			<p class="w3-left-align w3-small">
-© 2024 David Lewis Godlewski
-			</p>
+		<div class="w3-container w3-center w3-black section-height-small">
+			<p class="w3-left-align w3-small">© 2024 David Lewis Godlewski</p>
 		</div>
-		
 	</div>
 
 	
@@ -172,21 +168,15 @@
 
 
 	<!-- modal with snapchat code -->
-
-	<div id="modal01" class="w3-modal " onclick="this.style.display='none'">
+	<div id="modal01" class="w3-modal">
 		<div class="row w3-center">
 			<div class="w3-container col s12 m12">
-
-				<img class="w3-modal-content ugh s12 m12 w3-image" src="snapchat.png">
-
+				<img class="w3-modal-content modal-image s12 m12 w3-image" src="snapchat.png" alt="Snapchat QR Code">
 			</div>
 		</div>
 	</div>
 	<!-- end snapchat modal -->
 
-
-
-
-	</body>
-
+	<script src="script.js"></script>
+</body>
 </html>
