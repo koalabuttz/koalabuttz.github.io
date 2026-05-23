@@ -1,0 +1,202 @@
+"use strict";
+
+/* ─────────────────────────────────────────────────────────────────
+   ASCII plasma — characters in a <pre>, density via brightness ramp.
+   Color is applied entirely in CSS via background-clip + animated
+   gradient. Same code, both inline and fullscreen.
+   ───────────────────────────────────────────────────────────────── */
+
+const RAMP = "  .,-:;!=*#%@";
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+function plasmaFrame(cols, rows, t) {
+  const cx = cols / 2, cy = rows / 2;
+  let out = "";
+  for (let y = 0; y < rows; y++) {
+    let line = "";
+    for (let x = 0; x < cols; x++) {
+      const dx = x - cx, dy = (y - cy) * 2;
+      const r = Math.sqrt(dx * dx + dy * dy);
+      const v =
+        Math.sin(x * 0.22 + t * 1.7) +
+        Math.sin(y * 0.42 + t * 1.3) +
+        Math.sin((x + y) * 0.18 + t * 1.0) +
+        Math.sin(r * 0.30 - t * 2.1);
+      let idx = ((v + 4) / 8) * (RAMP.length - 1);
+      if (idx < 0) idx = 0;
+      if (idx > RAMP.length - 1) idx = RAMP.length - 1;
+      line += RAMP[idx | 0];
+    }
+    out += line + "\n";
+  }
+  return out;
+}
+
+/* inline plasma — renders one frame always, animates only if motion allowed */
+const plasma = (function () {
+  const el = document.getElementById("plasma");
+  if (!el) return null;
+  function cols() { return window.innerWidth < 520 ? 32 : 40; }
+  let t = 0;
+  let timer = 0;
+  function tick() {
+    el.textContent = plasmaFrame(cols(), 8, t);
+    t = (t + 0.1) % 10000;
+  }
+  function start() {
+    if (timer || reducedMotion.matches) return;
+    timer = setInterval(tick, 100);
+  }
+  function stop() {
+    if (!timer) return;
+    clearInterval(timer);
+    timer = 0;
+  }
+  tick();
+  start();
+  return { start, stop };
+})();
+
+/* press D — fullscreen ASCII demo with scroller row */
+const demo = document.getElementById("demo");
+const demoPre = document.getElementById("demoPre");
+
+const GREETZ =
+  "    *** ~david / full demo *** " +
+  "greetz to: lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+  "sed do eiusmod tempor incididunt, ut labore et dolore magna aliqua, " +
+  "ut enim ad minim veniam. " +
+  "this entire effect is text characters. no canvas. no images. " +
+  "the rainbow is one css gradient. " +
+  "press esc or d to return ***    ";
+
+let demoRunning = false;
+let demoT = 0;
+let demoTimer = 0;
+let demoSize = { cols: 0, rows: 0 };
+let demoScrollX = 0;
+
+function fitDemo() {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const cols = Math.max(40, Math.floor(vw / 8.4) - 4);
+  const rows = Math.max(20, Math.floor(vh / 13)  - 4);
+  return { cols, rows };
+}
+
+function tickDemo() {
+  if (!demoRunning) return;
+  const { cols, rows } = demoSize;
+  const frame = plasmaFrame(cols, rows, demoT).split("\n");
+
+  // overlay scroller on a middle row; clear neighbors for legibility
+  const mid = Math.floor(rows * 0.55);
+  const scrollOffset = demoScrollX % GREETZ.length;
+  let row = "";
+  for (let x = 0; x < cols; x++) {
+    row += GREETZ[(x + scrollOffset) % GREETZ.length];
+  }
+  frame[mid] = row;
+  if (mid > 0)         frame[mid - 1] = " ".repeat(cols);
+  if (mid < rows - 1)  frame[mid + 1] = " ".repeat(cols);
+
+  demoPre.textContent = frame.join("\n");
+  demoT = (demoT + 0.08) % 10000;
+  demoScrollX++;
+}
+
+function enterDemo() {
+  demoSize = fitDemo();
+  demoRunning = true;
+  demo.classList.add("on");
+  tickDemo();
+  if (!reducedMotion.matches) demoTimer = setInterval(tickDemo, 80);
+}
+function exitDemo() {
+  demoRunning = false;
+  demo.classList.remove("on");
+  if (demoTimer) { clearInterval(demoTimer); demoTimer = 0; }
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.repeat) return;
+  if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+  if (e.key === "d" || e.key === "D") {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (demoRunning) exitDemo(); else enterDemo();
+  } else if (e.key === "Escape" && demoRunning) {
+    exitDemo();
+  }
+});
+demo.addEventListener("click", exitDemo);
+window.addEventListener("resize", () => { if (demoRunning) demoSize = fitDemo(); });
+
+/* pause animations when tab is hidden */
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    plasma?.stop();
+    if (demoTimer) { clearInterval(demoTimer); demoTimer = 0; }
+  } else {
+    plasma?.start();
+    if (demoRunning && !reducedMotion.matches && !demoTimer) {
+      demoTimer = setInterval(tickDemo, 80);
+    }
+  }
+});
+
+/* react to reduced-motion preference changes mid-session */
+reducedMotion.addEventListener("change", () => {
+  if (reducedMotion.matches) {
+    plasma?.stop();
+    if (demoTimer) { clearInterval(demoTimer); demoTimer = 0; }
+  } else if (!document.hidden) {
+    plasma?.start();
+    if (demoRunning && !demoTimer) {
+      demoTimer = setInterval(tickDemo, 80);
+    }
+  }
+});
+
+/* visitor counter — placeholder, not a real count */
+(function () {
+  const el = document.getElementById("hits");
+  if (!el) return;
+  let n = 249;
+  setTimeout(() => { n += 1; el.textContent = String(n).padStart(7, "0"); }, 4000);
+})();
+
+/* dynamic timezone offset for Cambridge, MA (America/New_York) */
+(function () {
+  const el = document.getElementById("utc");
+  if (!el) return;
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      timeZoneName: "shortOffset",
+    }).formatToParts(new Date());
+    const tz = parts.find(p => p.type === "timeZoneName")?.value || "";
+    // "GMT-4" / "GMT-5" / "GMT" → "utc −4" / "utc −5" / "utc"
+    el.textContent = tz
+      .replace("GMT", "utc")
+      .replace("-", " −")
+      .replace("+", " +");
+  } catch { /* leave static fallback */ }
+})();
+
+/* dynamic page size — sum of same-origin HTML + CSS + JS bytes */
+window.addEventListener("load", () => {
+  const el = document.getElementById("size");
+  if (!el) return;
+  try {
+    let total = 0;
+    const nav = performance.getEntriesByType("navigation")[0];
+    if (nav?.decodedBodySize) total += nav.decodedBodySize;
+    for (const r of performance.getEntriesByType("resource")) {
+      try {
+        if (new URL(r.name).origin === location.origin && r.decodedBodySize) {
+          total += r.decodedBodySize;
+        }
+      } catch { /* ignore unparsable URLs */ }
+    }
+    if (total > 0) el.textContent = "~" + (total / 1024).toFixed(1) + " KB";
+  } catch { /* leave static fallback */ }
+});

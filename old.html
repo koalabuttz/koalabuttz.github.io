@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>~david</title>
+<style>
+/* ─────────────────────────────────────────────────────────────────
+   ~david / 2026 / 2008-era port
+   targets: ds-i, ps vita, wii, wii u, 3ds
+   no CSS variables, no gradients, no animations, no flex/grid
+   uses only CSS 2.1 + text-shadow (no blur) + opacity + box-sizing
+   ───────────────────────────────────────────────────────────────── */
+
+body {
+  background: #0a0a0e;
+  color: #d4ceb8;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 0;
+  padding: 0 18px 64px;
+}
+
+h1, h2 { font-weight: normal; margin: 0; }
+p { margin: 0 0 1em; }
+ul { margin: 0 0 1em; padding-left: 1.5em; }
+ul li { margin: 2px 0; }
+pre { margin: 0; white-space: pre; font-family: monospace; }
+
+a {
+  color: #d4a73e;
+  text-decoration: none;
+  border-bottom: 1px dotted #d4a73e;
+}
+a:hover { color: #ece5c4; }
+
+.page { max-width: 600px; margin: 0 auto; }
+
+/* ── prompt bar ───────────────────────────────────────────────── */
+.prompt-bar {
+  padding: 22px 0 12px;
+  font-size: 12px;
+  color: #6b6655;
+  border-bottom: 1px dashed #3c3a30;
+}
+.prompt-bar:after { content: ""; display: block; clear: both; }
+.prompt-bar .left { float: left; }
+.prompt-bar .right { float: right; }
+.prompt-bar .pr { color: #50ff80; }
+.prompt-bar .ps { color: #00e5ff; }
+.prompt-bar .meta b { color: #d4ceb8; font-weight: normal; }
+
+/* ── DAVID identity ───────────────────────────────────────────── */
+.identity { padding: 36px 0 18px; }
+
+h1.name {
+  font-size: 120px;
+  line-height: 0.82;
+  letter-spacing: 6px;
+  color: #ece5c4;
+  text-shadow: -3px 0 #ff2d95, 3px 0 #00e5ff;
+}
+
+.byline { margin-top: 14px; font-size: 13px; color: #6b6655; }
+.byline .sep { color: #3c3a30; margin: 0 6px; }
+.byline em { color: #d4ceb8; font-style: normal; }
+
+.status-line { margin-top: 14px; font-size: 13px; }
+.pip {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: #50ff80;
+  vertical-align: 1px;
+  margin-right: 8px;
+}
+.lbl {
+  display: inline-block;
+  font-size: 14px;
+  color: #0a0a0e;
+  background: #d4a73e;
+  padding: 0 8px;
+  letter-spacing: 1px;
+  margin-right: 8px;
+}
+
+/* ── plasma window ────────────────────────────────────────────── */
+.plasma-wrap { margin: 28px 0 10px; }
+.plasma-wrap:after { content: ""; display: block; clear: both; }
+
+.plasma {
+  float: left;
+  width: 380px;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.05;
+  letter-spacing: 1px;
+  margin-right: 18px;
+}
+
+.plasma-caption {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6b6655;
+  padding-left: 14px;
+  border-left: 1px solid #3c3a30;
+  overflow: hidden;
+}
+.plasma-caption .h {
+  color: #00e5ff;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 2px;
+}
+.demo-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 8px;
+  background: #0a0a0e;
+  border: 1px solid #d4a73e;
+  color: #d4a73e;
+  font-size: 11px;
+  cursor: pointer;
+}
+.demo-btn:hover { color: #ece5c4; border-color: #ece5c4; }
+
+/* ── section headers ──────────────────────────────────────────── */
+h2.sec {
+  margin: 32px 0 12px;
+  font-size: 18px;
+  line-height: 1.1;
+  letter-spacing: 1px;
+  color: #d4ceb8;
+  border-bottom: 1px solid #3c3a30;
+  padding-bottom: 6px;
+}
+h2.sec:after { content: ""; display: block; clear: both; }
+h2.sec .num { color: #d4a73e; font-size: 22px; margin-right: 8px; }
+h2.sec .label { color: #00e5ff; font-size: 26px; margin-right: 10px; }
+h2.sec .path { color: #6b6655; font-size: 12px; float: right; line-height: 30px; }
+
+/* ── projects ─────────────────────────────────────────────────── */
+.proj { margin: 16px 0 22px; }
+.proj .title {
+  font-size: 15px;
+  line-height: 1.15;
+  color: #ece5c4;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.proj .meta-line { color: #6b6655; padding-left: 14px; font-size: 12px; }
+.proj .meta-line .arrow { color: #3c3a30; margin-right: 4px; }
+.proj p { margin: 10px 0; }
+
+code {
+  font-family: monospace;
+  color: #ece5c4;
+}
+
+/* ── notes table ──────────────────────────────────────────────── */
+table.notes {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+table.notes td { padding: 2px 14px 2px 0; vertical-align: top; }
+table.notes td.d { color: #6b6655; width: 80px; }
+table.notes td.t { color: #d4ceb8; }
+table.notes td.s { color: #d4a73e; font-size: 11px; text-align: right; }
+
+/* ── contact table ────────────────────────────────────────────── */
+table.contact {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+table.contact td { padding: 2px 14px 2px 0; vertical-align: top; }
+table.contact td.k { color: #6b6655; width: 90px; }
+table.contact td.v { color: #d4ceb8; }
+table.contact td.v.pending { color: #6b6655; }
+.contact-note { color: #6b6655; margin-top: 14px; }
+
+/* ── footer ───────────────────────────────────────────────────── */
+.foot {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid #3c3a30;
+  color: #6b6655;
+  font-size: 12px;
+}
+.foot .row { margin: 2px 0; }
+.foot .k { color: #3c3a30; }
+.foot .counter {
+  display: inline-block;
+  font-size: 14px;
+  color: #50ff80;
+  background: #000;
+  padding: 0 6px;
+  border: 1px solid #3c3a30;
+  letter-spacing: 3px;
+}
+
+kbd {
+  font-family: monospace;
+  color: #ece5c4;
+  background: #000;
+  border: 1px solid #3c3a30;
+  padding: 0 5px;
+}
+
+/* ── (END) cursor ─────────────────────────────────────────────── */
+.less-end {
+  margin-top: 24px;
+  padding: 6px 8px;
+  background: #1a1a1f;
+  display: inline-block;
+  font-size: 13px;
+  color: #ece5c4;
+}
+.less-end .label { color: #ece5c4; margin-right: 4px; }
+.less-end .colon { color: #d4a73e; margin-right: 1px; }
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  background: #ece5c4;
+  vertical-align: -2px;
+  margin-left: 2px;
+}
+
+/* ── fullscreen demo ──────────────────────────────────────────── */
+#demo {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #000;
+  z-index: 100;
+  cursor: pointer;
+}
+#demo.on { display: block; }
+#demoPre {
+  margin: 4% auto;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-align: center;
+}
+.exit-msg {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #6b6655;
+  font-size: 12px;
+}
+.exit-msg .inner {
+  background: #0a0a0e;
+  padding: 6px 14px;
+  display: inline-block;
+}
+
+/* ── mobile (DSi screens) ─────────────────────────────────────── */
+@media (max-width: 320px) {
+  body { padding: 8px; font-size: 11px; }
+  h1.name { font-size: 64px; letter-spacing: 3px; }
+  h2.sec { font-size: 14px; }
+  h2.sec .num { font-size: 16px; }
+  h2.sec .label { font-size: 20px; }
+  h2.sec .path { display: none; }
+  .plasma { float: none; margin-right: 0; width: auto; font-size: 11px; letter-spacing: 0; }
+  .plasma-caption {
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px dashed #3c3a30;
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<!-- ─── top prompt ─── -->
+<div class="prompt-bar">
+  <div class="left">
+    <span class="pr">$</span>
+    <span class="ps">less</span>
+    <span> ~/david/index.txt</span>
+  </div>
+  <div class="right meta">last edit: <b>2026-05-21</b></div>
+</div>
+
+<!-- ─── identity ─── -->
+<div class="identity">
+  <h1 class="name">DAVID</h1>
+  <div class="byline">
+    <em>lorem ipsum</em>
+    <span class="sep">/</span> dolor sit
+    <span class="sep">/</span> amet consectetur
+    <span class="sep">/</span> adipiscing elit
+    <span class="sep">&middot;</span> cambridge, ma
+  </div>
+  <div class="status-line">
+    <span class="pip" id="pip"></span>
+    <span class="lbl">STATUS</span>
+    lorem ipsum dolor sit amet &mdash; consectetur, adipiscing, elit, sed do
+  </div>
+</div>
+
+<!-- ─── plasma ─── -->
+<div class="plasma-wrap">
+  <pre class="plasma" id="plasma">loading.</pre>
+  <div class="plasma-caption">
+    <span class="h">// PLASMA.RGB</span>
+    40 &times; 8 &middot; ascii only<br>
+    rainbow via per-char spans<br>
+    no canvas &middot; no images<br>
+    press <kbd>D</kbd> for full demo<br>
+    <span class="demo-btn" id="demoBtn">&#9654; launch demo</span>
+  </div>
+</div>
+
+<!-- ─── §1 about ─── -->
+<h2 class="sec">
+  <span class="num">&sect;1</span>
+  <span class="label">about</span>
+  <span class="path">~/about</span>
+</h2>
+
+<p>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat.
+</p>
+
+<p>
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est
+laborum.
+</p>
+
+<!-- ─── §2 /now ─── -->
+<h2 class="sec">
+  <span class="num">&sect;2</span>
+  <span class="label">/now</span>
+  <span class="path">updated 2026-05</span>
+</h2>
+
+<ul>
+  <li>shipping <b>project-alpha</b> across multiple platforms</li>
+  <li>extracting <b>lorem-ipsum</b> &mdash; a framework for dolor sit amet</li>
+  <li>reading <b>consectetur</b> documentation for fun</li>
+  <li>seeking opportunities &mdash; see &sect;5 below</li>
+</ul>
+
+<!-- ─── §3 work ─── -->
+<h2 class="sec">
+  <span class="num">&sect;3</span>
+  <span class="label">work</span>
+  <span class="path">~/work</span>
+</h2>
+
+<div class="proj">
+  <div class="title">project-alpha &mdash; lorem ipsum dolor sit amet consectetur</div>
+  <div class="meta-line"><span class="arrow">&gt;</span><a href="https://github.com/koalabuttz/project-alpha">github.com/koalabuttz/project-alpha</a></div>
+  <div class="meta-line"><span class="arrow">&gt;</span>tag-one &middot; tag-two &middot; tag-three &middot; tag-four &middot; license</div>
+  <div class="meta-line"><span class="arrow">&gt;</span>v0.1.0 &middot; ~100 commits &middot; ~500 tests &middot; N platforms</div>
+  <p>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+  veniam, quis nostrud exercitation ullamco <code>laboris</code> nisi ut
+  aliquip ex ea commodo consequat, duis aute irure dolor in reprehenderit
+  in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+  </p>
+  <p>
+  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+  officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
+  omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+  totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.
+  </p>
+</div>
+
+<div class="proj">
+  <div class="title">project-beta &mdash; placeholder for the second project</div>
+  <div class="meta-line"><span class="arrow">&gt;</span>[in progress] &mdash; lorem ipsum dolor sit amet consectetur</div>
+  <div class="meta-line"><span class="arrow">&gt;</span>tag-one &middot; tag-two &middot; tag-three</div>
+</div>
+
+<div class="proj">
+  <div class="title">project-gamma &mdash; placeholder for the third project</div>
+  <div class="meta-line"><span class="arrow">&gt;</span>consectetur adipiscing elit sed do eiusmod tempor incididunt</div>
+  <div class="meta-line"><span class="arrow">&gt;</span>tag-one &middot; tag-two &middot; tag-three</div>
+</div>
+
+<!-- ─── §4 notes ─── -->
+<h2 class="sec">
+  <span class="num">&sect;4</span>
+  <span class="label">notes</span>
+  <span class="path">~/notes</span>
+</h2>
+
+<table class="notes">
+  <tr><td class="d">2026-04</td><td class="t">lorem ipsum dolor sit amet consectetur</td><td class="s">draft</td></tr>
+  <tr><td class="d">2026-02</td><td class="t">adipiscing elit sed do eiusmod tempor</td><td class="s"></td></tr>
+  <tr><td class="d">2026-01</td><td class="t">incididunt ut labore et dolore magna</td><td class="s"></td></tr>
+  <tr><td class="d">2025-11</td><td class="t">aliqua ut enim ad minim veniam</td><td class="s"></td></tr>
+  <tr><td class="d">2025-09</td><td class="t">quis nostrud exercitation ullamco laboris</td><td class="s"></td></tr>
+</table>
+
+<!-- ─── §5 contact ─── -->
+<h2 class="sec">
+  <span class="num">&sect;5</span>
+  <span class="label">contact</span>
+  <span class="path">~/contact</span>
+</h2>
+
+<table class="contact">
+  <tr><td class="k">email</td><td class="v">david [at] this domain &mdash; please use the obvious substitution</td></tr>
+  <tr><td class="k">github</td><td class="v"><a href="https://github.com/koalabuttz">github.com/koalabuttz</a></td></tr>
+  <tr><td class="k">location</td><td class="v">cambridge, massachusetts (<span id="utc">utc &minus;4</span>)</td></tr>
+  <tr><td class="k">cv</td><td class="v pending">cv.pdf &middot; plain text</td></tr>
+</table>
+
+<p class="contact-note">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua.
+</p>
+
+<!-- ─── footer ─── -->
+<div class="foot">
+  <div class="row">visitors:&nbsp;&nbsp;<span class="counter" id="hits">0000249</span>&nbsp;&nbsp;&middot;&nbsp;&nbsp;press <kbd>D</kbd> for the demo</div>
+  <div class="row"><span class="k">source:</span>   HTML+CSS+JS, no build step, no dependencies, <span id="size">~16 KB</span>.</div>
+  <div class="row"><span class="k">fonts:</span>    system mono (no webfont on legacy browsers).</div>
+  <div class="row"><span class="k">works in:</span> chrome, firefox, safari, ds-i, vita, wii, wii u, 3ds.</div>
+  <div class="row"><span class="k">rss:</span>      /feed.xml</div>
+  <div class="row" style="margin-top: 8px;">last edit: 2026-05-21 &mdash; david</div>
+</div>
+
+<!-- ─── (END) prompt ─── -->
+<div class="less-end">
+  <span class="label">(END)</span><span class="colon">:</span><span class="cursor" id="cursor"></span>
+</div>
+
+</div><!-- /page -->
+
+<!-- ─── fullscreen demo ─── -->
+<div id="demo">
+  <pre id="demoPre"></pre>
+  <div class="exit-msg"><span class="inner">press <kbd>D</kbd> or <kbd>Esc</kbd> to exit &middot; or click anywhere</span></div>
+</div>
+
+<script>
+/* 2008-era JS (ES3) — works on Opera 9.5 / NetFront NX / older WebKit */
+(function() {
+  var RAMP = "  .,-:;!=*#%@";
+  var PALETTE = ["#ff2d95", "#ffea00", "#50ff80", "#00e5ff"];
+  var COLS = 40, ROWS = 8;
+
+  /* ─── inline plasma ──────────────────────────────────────────── */
+  var plasma = document.getElementById("plasma");
+  var t = 0;
+
+  function plasmaFrame(cols, rows, time) {
+    var cx = cols / 2, cy = rows / 2;
+    var parts = [];
+    var colorShift = Math.floor(time * 2);
+    for (var y = 0; y < rows; y++) {
+      for (var x = 0; x < cols; x++) {
+        var dx = x - cx;
+        var dy = (y - cy) * 2;
+        var r = Math.sqrt(dx * dx + dy * dy);
+        var v =
+          Math.sin(x * 0.22 + time * 1.7) +
+          Math.sin(y * 0.42 + time * 1.3) +
+          Math.sin((x + y) * 0.18 + time * 1.0) +
+          Math.sin(r * 0.30 - time * 2.1);
+        var idx = Math.floor(((v + 4) / 8) * (RAMP.length - 1));
+        if (idx < 0) idx = 0;
+        if (idx > RAMP.length - 1) idx = RAMP.length - 1;
+        var ch = RAMP.charAt(idx);
+        if (ch === " ") {
+          parts.push(" ");
+        } else {
+          var ci = (x + colorShift) % PALETTE.length;
+          if (ci < 0) ci += PALETTE.length;
+          parts.push('<span style="color:' + PALETTE[ci] + '">' + ch + '</span>');
+        }
+      }
+      parts.push("\n");
+    }
+    return parts.join("");
+  }
+
+  function tick() {
+    plasma.innerHTML = plasmaFrame(COLS, ROWS, t);
+    t = (t + 0.1) % 10000;
+  }
+
+  tick();
+  setInterval(tick, 100);
+
+  /* ─── fullscreen demo ───────────────────────────────────────── */
+  var GREETZ =
+    "    *** ~david / full demo *** " +
+    "greetz to: lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+    "sed do eiusmod tempor incididunt, ut labore et dolore magna aliqua, " +
+    "ut enim ad minim veniam. " +
+    "this entire effect is text characters. no canvas. no images. " +
+    "the rainbow is per-character spans. " +
+    "press esc or d to return ***    ";
+
+  var demo = document.getElementById("demo");
+  var demoPre = document.getElementById("demoPre");
+  var demoRunning = false;
+  var demoT = 0;
+  var demoTimer = null;
+  var demoCols = 0, demoRows = 0;
+  var demoScrollX = 0;
+
+  function fitDemo() {
+    var vw = document.documentElement.clientWidth || 320;
+    var vh = document.documentElement.clientHeight || 240;
+    var c = Math.floor(vw / 9) - 4;
+    var r = Math.floor(vh / 14) - 4;
+    if (c < 40) c = 40;
+    if (r < 16) r = 16;
+    /* cap to avoid DOM explosion on Vita-sized viewports */
+    if (c > 80) c = 80;
+    if (r > 28) r = 28;
+    return { cols: c, rows: r };
+  }
+
+  /* per-chunk rendering: each 8-char run shares one color, so the
+     full demo is ~6x fewer spans than per-character (one of the most
+     expensive things for the Vita's NetFront browser is parsing the
+     resulting innerHTML string and constructing the DOM nodes). */
+  var CHUNK = 8;
+
+  function tickDemo() {
+    if (!demoRunning) return;
+    var cols = demoCols, rows = demoRows;
+    var parts = [];
+    var mid = Math.floor(rows * 0.55);
+    var colorShift = Math.floor(demoT * 2);
+    var cx = cols / 2, cy = rows / 2;
+    var scrollOff = demoScrollX % GREETZ.length;
+    var x, y, c, i, chunkEnd, chunkText, chunkColor;
+
+    /* precompute one color per chunk index for this frame */
+    var nChunks = Math.ceil(cols / CHUNK);
+    var chunkColors = [];
+    for (c = 0; c < nChunks; c++) {
+      var ck = (c + colorShift) % PALETTE.length;
+      if (ck < 0) ck += PALETTE.length;
+      chunkColors.push(PALETTE[ck]);
+    }
+
+    for (y = 0; y < rows; y++) {
+      if (y === mid) {
+        /* GREETZ scroller — per-chunk */
+        x = 0;
+        c = 0;
+        while (x < cols) {
+          chunkEnd = x + CHUNK;
+          if (chunkEnd > cols) chunkEnd = cols;
+          chunkText = "";
+          for (i = x; i < chunkEnd; i++) {
+            chunkText += GREETZ.charAt((i + scrollOff) % GREETZ.length);
+          }
+          parts.push('<span style="color:' + chunkColors[c] + '">' + chunkText + '</span>');
+          x = chunkEnd;
+          c++;
+        }
+      } else if (y === mid - 1 || y === mid + 1) {
+        /* blank rows around scroller — no spans */
+        for (x = 0; x < cols; x++) parts.push(" ");
+      } else {
+        /* plasma row — per-chunk */
+        x = 0;
+        c = 0;
+        while (x < cols) {
+          chunkEnd = x + CHUNK;
+          if (chunkEnd > cols) chunkEnd = cols;
+          chunkText = "";
+          for (i = x; i < chunkEnd; i++) {
+            var dx = i - cx;
+            var dy = (y - cy) * 2;
+            var rd = Math.sqrt(dx * dx + dy * dy);
+            var v =
+              Math.sin(i * 0.22 + demoT * 1.7) +
+              Math.sin(y * 0.42 + demoT * 1.3) +
+              Math.sin((i + y) * 0.18 + demoT * 1.0) +
+              Math.sin(rd * 0.30 - demoT * 2.1);
+            var idx = Math.floor(((v + 4) / 8) * (RAMP.length - 1));
+            if (idx < 0) idx = 0;
+            if (idx > RAMP.length - 1) idx = RAMP.length - 1;
+            chunkText += RAMP.charAt(idx);
+          }
+          parts.push('<span style="color:' + chunkColors[c] + '">' + chunkText + '</span>');
+          x = chunkEnd;
+          c++;
+        }
+      }
+      parts.push("\n");
+    }
+
+    demoPre.innerHTML = parts.join("");
+    demoT = (demoT + 0.08) % 10000;
+    demoScrollX++;
+  }
+
+  function enterDemo() {
+    var size = fitDemo();
+    demoCols = size.cols;
+    demoRows = size.rows;
+    demoRunning = true;
+    demo.className = "on";
+    tickDemo();
+    demoTimer = setInterval(tickDemo, 100);
+  }
+
+  function exitDemo() {
+    demoRunning = false;
+    demo.className = "";
+    if (demoTimer) {
+      clearInterval(demoTimer);
+      demoTimer = null;
+    }
+  }
+
+  document.onkeydown = function(e) {
+    e = e || window.event;
+    var key = e.keyCode || e.which;
+    if (key === 68) { /* D */
+      if (demoRunning) exitDemo(); else enterDemo();
+    } else if (key === 27 && demoRunning) { /* Esc */
+      exitDemo();
+    }
+  };
+  demo.onclick = exitDemo;
+  var btn = document.getElementById("demoBtn");
+  if (btn) {
+    btn.onclick = function() {
+      if (!demoRunning) enterDemo();
+    };
+  }
+
+  /* ─── pip pulse ─────────────────────────────────────────────── */
+  var pip = document.getElementById("pip");
+  if (pip) {
+    var pipOn = true;
+    setInterval(function() {
+      pipOn = !pipOn;
+      pip.style.opacity = pipOn ? 1 : 0.35;
+    }, 1200);
+  }
+
+  /* ─── cursor blink ──────────────────────────────────────────── */
+  var cursor = document.getElementById("cursor");
+  if (cursor) {
+    var cursorVisible = true;
+    setInterval(function() {
+      cursorVisible = !cursorVisible;
+      cursor.style.visibility = cursorVisible ? "visible" : "hidden";
+    }, 500);
+  }
+
+  /* ─── visitor counter ───────────────────────────────────────── */
+  var hits = document.getElementById("hits");
+  if (hits) {
+    setTimeout(function() {
+      var n = 250;
+      var s = "" + n;
+      while (s.length < 7) s = "0" + s;
+      hits.innerHTML = s;
+    }, 4000);
+  }
+
+  /* ─── timezone (Cambridge, MA / US Eastern, manual DST) ─────── */
+  /* DST in US: 2nd Sunday March → 1st Sunday November */
+  var utc = document.getElementById("utc");
+  if (utc) {
+    var now = new Date();
+    var year = now.getFullYear();
+    var d1 = new Date(year, 2, 1);
+    var dstStart = new Date(year, 2, 1 + ((7 - d1.getDay()) % 7) + 7);
+    var d2 = new Date(year, 10, 1);
+    var dstEnd = new Date(year, 10, 1 + ((7 - d2.getDay()) % 7));
+    var offset = (now >= dstStart && now < dstEnd) ? 4 : 5;
+    utc.innerHTML = "utc −" + offset;
+  }
+
+  /* ─── page size (XHR self-fetch) ────────────────────────────── */
+  var sizeEl = document.getElementById("size");
+  if (sizeEl && window.XMLHttpRequest) {
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "old.html", true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var kb = xhr.responseText.length / 1024;
+          /* manual fixed(1) since toFixed exists in ES3, just being safe */
+          var rounded = Math.round(kb * 10) / 10;
+          sizeEl.innerHTML = "~" + rounded + " KB";
+        }
+      };
+      xhr.send(null);
+    } catch (e) { /* leave fallback */ }
+  }
+})();
+</script>
+</body>
+</html>
