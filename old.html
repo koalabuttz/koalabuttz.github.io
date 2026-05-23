@@ -260,6 +260,12 @@ kbd {
   display: inline-block;
 }
 
+/* demo plasma palette — set via className from JS (cheaper than inline color) */
+.c0 { color: #ff2d95; }
+.c1 { color: #ffea00; }
+.c2 { color: #50ff80; }
+.c3 { color: #00e5ff; }
+
 /* ── mobile (DSi screens) ─────────────────────────────────────── */
 @media (max-width: 320px) {
   body { padding: 8px; font-size: 11px; }
@@ -461,6 +467,16 @@ tempor incididunt ut labore et dolore magna aliqua.
   var PALETTE = ["#ff2d95", "#ffea00", "#50ff80", "#00e5ff"];
   var COLS = 40, ROWS = 8;
 
+  /* sine lookup table (shared infra) — power-of-two size so we can mask
+     instead of modulo. sin(theta) ~= SIN[(theta*ANG | 0) & MASK]; the mask
+     also wraps negative indices correctly since sine is periodic. */
+  var SIN_SIZE = 4096, MASK = SIN_SIZE - 1;
+  var ANG = SIN_SIZE / (2 * Math.PI);
+  var SIN = [];
+  for (var si = 0; si < SIN_SIZE; si++) SIN[si] = Math.sin(si * 2 * Math.PI / SIN_SIZE);
+  var RAMPMAX = RAMP.length - 1;
+  var VSCALE = RAMPMAX / 8;   /* folds the (v+4)/8 * (RAMP.length-1) mapping */
+
   /* ─── inline plasma ──────────────────────────────────────────── */
   var plasma = document.getElementById("plasma");
   var t = 0;
@@ -502,7 +518,7 @@ tempor incididunt ut labore et dolore magna aliqua.
   }
 
   tick();
-  setInterval(tick, 100);
+  var plasmaTimer = setInterval(tick, 100);
 
   /* ─── fullscreen demo ───────────────────────────────────────── */
   var GREETZ =
@@ -518,9 +534,17 @@ tempor incididunt ut labore et dolore magna aliqua.
   var demoPre = document.getElementById("demoPre");
   var demoRunning = false;
   var demoT = 0;
-  var demoTimer = null;
-  var demoCols = 0, demoRows = 0;
   var demoScrollX = 0;
+  var demoCols = 0, demoRows = 0;
+  var demoTimeout = null;
+  var demoLast = 0;
+
+  /* pre-allocated DOM + precomputed tables (rebuilt per demo session) */
+  var chunkSpan = [], chunkClass = [];
+  var xPhaseIdx = [], yPhaseIdx = [], xyPhaseIdx = [], rPhaseIdx = [];
+  var sinX = [], sinY = [], sinXY = [];
+  var demoMid = 0, demoNChunks = 0;
+  var fpsEl = null, workAvg = 0, frameAvg = 0;   /* frame-time readout (SHOW_FPS) */
 
   function fitDemo() {
     var vw = document.documentElement.clientWidth || 320;
@@ -529,108 +553,164 @@ tempor incididunt ut labore et dolore magna aliqua.
     var r = Math.floor(vh / 14) - 4;
     if (c < 40) c = 40;
     if (r < 16) r = 16;
-    /* cap to avoid DOM explosion on Vita-sized viewports */
     if (c > 80) c = 80;
     if (r > 28) r = 28;
     return { cols: c, rows: r };
   }
 
-  /* per-chunk rendering: each 8-char run shares one color, so the
-     full demo is ~6x fewer spans than per-character (one of the most
-     expensive things for the Vita's NetFront browser is parsing the
-     resulting innerHTML string and constructing the DOM nodes). */
+  /* per-chunk rendering: each CHUNK-char run is one <span> sharing one color,
+     so an 80x28 grid is ~280 spans instead of 2240 cells. */
   var CHUNK = 8;
+  var TARGET_MS = 90;   /* frame pacing target; achieved rate degrades gracefully */
+  var SHOW_FPS = false; /* flip to true to overlay ms/frame + fps (dev measurement) */
 
-  function tickDemo() {
-    if (!demoRunning) return;
-    var cols = demoCols, rows = demoRows;
-    var parts = [];
-    var mid = Math.floor(rows * 0.55);
-    var colorShift = Math.floor(demoT * 2);
-    var cx = cols / 2, cy = rows / 2;
-    var scrollOff = demoScrollX % GREETZ.length;
-    var x, y, c, i, chunkEnd, chunkText, chunkColor;
-
-    /* precompute one color per chunk index for this frame */
-    var nChunks = Math.ceil(cols / CHUNK);
-    var chunkColors = [];
-    for (c = 0; c < nChunks; c++) {
-      var ck = (c + colorShift) % PALETTE.length;
-      if (ck < 0) ck += PALETTE.length;
-      chunkColors.push(PALETTE[ck]);
-    }
-
+  /* build phase-index tables for the current dimensions. radius is constant
+     per cell (only the time offset changes), so this is the only sqrt pass. */
+  function setupDemo(cols, rows) {
+    var cx = cols / 2, cy = rows / 2, x, y, s, dx, dy, k;
+    xPhaseIdx = [];  for (x = 0; x < cols; x++)        xPhaseIdx[x]  = (x * 0.22 * ANG) | 0;
+    yPhaseIdx = [];  for (y = 0; y < rows; y++)        yPhaseIdx[y]  = (y * 0.42 * ANG) | 0;
+    xyPhaseIdx = []; for (s = 0; s < cols + rows; s++) xyPhaseIdx[s] = (s * 0.18 * ANG) | 0;
+    rPhaseIdx = [];
+    k = 0;
     for (y = 0; y < rows; y++) {
-      if (y === mid) {
-        /* GREETZ scroller — per-chunk */
-        x = 0;
-        c = 0;
-        while (x < cols) {
-          chunkEnd = x + CHUNK;
-          if (chunkEnd > cols) chunkEnd = cols;
-          chunkText = "";
-          for (i = x; i < chunkEnd; i++) {
-            chunkText += GREETZ.charAt((i + scrollOff) % GREETZ.length);
-          }
-          parts.push('<span style="color:' + chunkColors[c] + '">' + chunkText + '</span>');
-          x = chunkEnd;
-          c++;
-        }
-      } else if (y === mid - 1 || y === mid + 1) {
-        /* blank rows around scroller — no spans */
-        for (x = 0; x < cols; x++) parts.push(" ");
-      } else {
-        /* plasma row — per-chunk */
-        x = 0;
-        c = 0;
-        while (x < cols) {
-          chunkEnd = x + CHUNK;
-          if (chunkEnd > cols) chunkEnd = cols;
-          chunkText = "";
-          for (i = x; i < chunkEnd; i++) {
-            var dx = i - cx;
-            var dy = (y - cy) * 2;
-            var rd = Math.sqrt(dx * dx + dy * dy);
-            var v =
-              Math.sin(i * 0.22 + demoT * 1.7) +
-              Math.sin(y * 0.42 + demoT * 1.3) +
-              Math.sin((i + y) * 0.18 + demoT * 1.0) +
-              Math.sin(rd * 0.30 - demoT * 2.1);
-            var idx = Math.floor(((v + 4) / 8) * (RAMP.length - 1));
-            if (idx < 0) idx = 0;
-            if (idx > RAMP.length - 1) idx = RAMP.length - 1;
-            chunkText += RAMP.charAt(idx);
-          }
-          parts.push('<span style="color:' + chunkColors[c] + '">' + chunkText + '</span>');
-          x = chunkEnd;
-          c++;
-        }
+      dy = (y - cy) * 2;
+      for (x = 0; x < cols; x++) {
+        dx = x - cx;
+        rPhaseIdx[k++] = (Math.sqrt(dx * dx + dy * dy) * 0.30 * ANG) | 0;
       }
-      parts.push("\n");
     }
+    demoMid = Math.floor(rows * 0.55);
+    demoNChunks = Math.ceil(cols / CHUNK);
+  }
 
-    demoPre.innerHTML = parts.join("");
-    demoT = (demoT + 0.08) % 10000;
-    demoScrollX++;
+  /* create the fixed grid of chunk spans once; the render loop walks them in
+     the same row/chunk order via a running index k. */
+  function buildDemoGrid(cols, rows) {
+    while (demoPre.firstChild) demoPre.removeChild(demoPre.firstChild);
+    chunkSpan = [];
+    chunkClass = [];
+    var spaces = "", z, x, y, end, span;
+    for (z = 0; z < CHUNK; z++) spaces += " ";
+    for (y = 0; y < rows; y++) {
+      for (x = 0; x < cols; x += CHUNK) {
+        end = x + CHUNK; if (end > cols) end = cols;
+        span = document.createElement("span");
+        span.appendChild(document.createTextNode(spaces.substring(0, end - x)));
+        demoPre.appendChild(span);
+        chunkSpan.push(span);
+      }
+      demoPre.appendChild(document.createTextNode("\n"));
+    }
+  }
+
+  /* one frame: fill the separable sine tables, then mutate span text in place
+     (and className only when the color band actually shifts). */
+  function renderDemoFrame() {
+    var cols = demoCols, rows = demoRows, mid = demoMid;
+    var tA = (demoT * 1.7 * ANG) | 0;
+    var tB = (demoT * 1.3 * ANG) | 0;
+    var tC = (demoT * 1.0 * ANG) | 0;
+    var tD = (demoT * 2.1 * ANG) | 0;
+    var x, y, s, k, c, i, end, span, text, v, idx, sy, ci;
+    var smax = cols + rows;
+
+    for (x = 0; x < cols; x++) sinX[x]  = SIN[(xPhaseIdx[x]  + tA) & MASK];
+    for (y = 0; y < rows; y++) sinY[y]  = SIN[(yPhaseIdx[y]  + tB) & MASK];
+    for (s = 0; s < smax; s++) sinXY[s] = SIN[(xyPhaseIdx[s] + tC) & MASK];
+
+    var colorShift = Math.floor(demoT * 2);
+    var scrollOff = Math.floor(demoScrollX) % GREETZ.length;
+    var glen = GREETZ.length, np = PALETTE.length;
+
+    k = 0;
+    var rcell = 0;
+    for (y = 0; y < rows; y++) {
+      var blank = (y === mid - 1 || y === mid + 1);
+      var greetz = (y === mid);
+      if (blank) { k += demoNChunks; rcell += cols; continue; }  /* blank rows set once at build */
+      sy = sinY[y];
+      c = 0;
+      for (x = 0; x < cols; x += CHUNK) {
+        end = x + CHUNK; if (end > cols) end = cols;
+        span = chunkSpan[k];
+        text = "";
+        if (greetz) {
+          for (i = x; i < end; i++) text += GREETZ.charAt((i + scrollOff) % glen);
+        } else {
+          for (i = x; i < end; i++) {
+            v = sinX[i] + sy + sinXY[i + y] + SIN[(rPhaseIdx[rcell + i] - tD) & MASK];
+            idx = ((v + 4) * VSCALE) | 0;
+            if (idx < 0) idx = 0; else if (idx > RAMPMAX) idx = RAMPMAX;
+            text += RAMP.charAt(idx);
+          }
+        }
+        span.firstChild.nodeValue = text;
+        ci = (c + colorShift) % np;
+        if (chunkClass[k] !== ci) { span.className = "c" + ci; chunkClass[k] = ci; }
+        k++;
+        c++;
+      }
+      rcell += cols;
+    }
+  }
+
+  function demoLoop() {
+    if (!demoRunning) return;
+    var now = (new Date()).getTime();
+    var rawDt = now - demoLast;
+    demoLast = now;
+    var dt = rawDt > 250 ? 250 : rawDt;   /* clamp drives animation, not the readout */
+    var step = dt / TARGET_MS;            /* time-correct: motion speed stays constant */
+    renderDemoFrame();
+    demoT = (demoT + 0.08 * step) % 10000;
+    demoScrollX += step;
+    var spent = (new Date()).getTime() - now;
+    if (SHOW_FPS && fpsEl) {
+      workAvg += (spent - workAvg) * 0.2;     /* light smoothing so it's readable */
+      frameAvg += (rawDt - frameAvg) * 0.2;
+      fpsEl.firstChild.nodeValue =
+        (workAvg | 0) + "ms work / " + (frameAvg | 0) + "ms frame / " +
+        (frameAvg > 0 ? (1000 / frameAvg) | 0 : 0) + " fps";
+    }
+    var delay = TARGET_MS - spent;
+    if (delay < 10) delay = 10;           /* floor leaves the browser breathing room */
+    demoTimeout = setTimeout(demoLoop, delay);
   }
 
   function enterDemo() {
+    /* pause the inline plasma so it stops doing innerHTML + Math.sin behind
+       the overlay, contending for the Vita's CPU/paint while the demo runs */
+    if (plasmaTimer) { clearInterval(plasmaTimer); plasmaTimer = null; }
     var size = fitDemo();
     demoCols = size.cols;
     demoRows = size.rows;
+    setupDemo(demoCols, demoRows);
+    buildDemoGrid(demoCols, demoRows);
+    if (SHOW_FPS && !fpsEl) {
+      fpsEl = document.createElement("div");
+      fpsEl.style.position = "absolute";
+      fpsEl.style.top = "8px";
+      fpsEl.style.left = "8px";
+      fpsEl.style.color = "#50ff80";
+      fpsEl.style.fontSize = "12px";
+      fpsEl.appendChild(document.createTextNode(""));
+      demo.appendChild(fpsEl);
+    }
     demoRunning = true;
     demo.className = "on";
-    tickDemo();
-    demoTimer = setInterval(tickDemo, 100);
+    demoLast = (new Date()).getTime();
+    demoLoop();
   }
 
   function exitDemo() {
     demoRunning = false;
     demo.className = "";
-    if (demoTimer) {
-      clearInterval(demoTimer);
-      demoTimer = null;
+    if (demoTimeout) {
+      clearTimeout(demoTimeout);
+      demoTimeout = null;
     }
+    if (!plasmaTimer) plasmaTimer = setInterval(tick, 100);   /* resume inline plasma */
   }
 
   document.onkeydown = function(e) {
