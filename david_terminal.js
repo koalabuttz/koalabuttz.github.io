@@ -60,6 +60,7 @@ const plasma = (function () {
 /* press D — fullscreen ASCII demo with scroller row */
 const demo = document.getElementById("demo");
 const demoPre = document.getElementById("demoPre");
+const page = document.querySelector(".page");
 
 const GREETZ =
   "    *** ~david / full demo *** " +
@@ -75,6 +76,7 @@ let demoT = 0;
 let demoTimer = 0;
 let demoSize = { cols: 0, rows: 0 };
 let demoScrollX = 0;
+let lastFocus = null;
 
 function fitDemo() {
   const vw = window.innerWidth, vh = window.innerHeight;
@@ -107,14 +109,22 @@ function tickDemo() {
 function enterDemo() {
   demoSize = fitDemo();
   demoRunning = true;
+  lastFocus = document.activeElement;        // restore on exit
+  if (page) page.inert = true;               // background non-interactive (focus trap)
+  demo.setAttribute("aria-hidden", "false");
   demo.classList.add("on");
+  demo.focus();
   tickDemo();
   if (!reducedMotion.matches) demoTimer = setInterval(tickDemo, 80);
 }
 function exitDemo() {
   demoRunning = false;
   demo.classList.remove("on");
+  demo.setAttribute("aria-hidden", "true");
+  if (page) page.inert = false;
   if (demoTimer) { clearInterval(demoTimer); demoTimer = 0; }
+  if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+  lastFocus = null;
 }
 
 document.addEventListener("keydown", (e) => {
@@ -125,6 +135,11 @@ document.addEventListener("keydown", (e) => {
     if (demoRunning) exitDemo(); else enterDemo();
   } else if (e.key === "Escape" && demoRunning) {
     exitDemo();
+  } else if (e.key === "Tab" && demoRunning) {
+    // no focusable controls inside; keep focus on the dialog
+    // (fallback for browsers without `inert` support on .page)
+    e.preventDefault();
+    demo.focus();
   }
 });
 demo.addEventListener("click", exitDemo);
