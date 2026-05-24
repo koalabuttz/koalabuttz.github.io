@@ -2,3 +2,7 @@
 *.swp
 *~
 CLAUDE.md
+
+# deploy-time copy of vita-breakout/henlo (the Act III overlay bundle);
+# staged here for a real Vita to fetch, never committed — see sync-vita-demo.sh
+/vita/

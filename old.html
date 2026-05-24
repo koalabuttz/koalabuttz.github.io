@@ -124,6 +124,28 @@ h1.name {
 }
 .demo-btn:hover { color: #ece5c4; border-color: #ece5c4; }
 
+/* vita native-overlay control — hidden until a PS Vita UA is detected (JS).
+   pink accent (the DAVID aberration color) sets it apart from the amber
+   ascii-demo button: this one runs a real kernel exploit, not a <pre> loop. */
+.vb-vita {
+  display: none;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #3c3a30;
+}
+.vb-vita .vh { color: #ff2d95; font-size: 13px; display: block; margin-bottom: 4px; }
+.vb-run {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #0a0a0e;
+  border: 1px solid #ff2d95;
+  color: #ff2d95;
+  font-size: 11px;
+  cursor: pointer;
+}
+.vb-run:hover { color: #ece5c4; border-color: #ece5c4; }
+.vb-sub { display: block; margin-top: 6px; color: #6b6655; font-size: 11px; }
+
 /* ── section headers ──────────────────────────────────────────── */
 h2.sec {
   margin: 32px 0 12px;
@@ -326,6 +348,11 @@ kbd {
     no canvas &middot; no images<br>
     press <kbd>D</kbd> for full demo<br>
     <span class="demo-btn" id="demoBtn">&#9654; launch demo</span>
+    <div id="vbVita" class="vb-vita">
+      <span class="vh">// PS VITA DETECTED</span>
+      <span class="vb-run" id="vbRun">&#9654; paint this page from the kernel</span>
+      <span class="vb-sub">HENlo (TheFlow) &middot; fw 3.65 &middot; RAM-only &middot; O/PS closes it</span>
+    </div>
   </div>
 </div>
 
@@ -728,6 +755,59 @@ tempor incididunt ut labore et dolore magna aliqua.
     btn.onclick = function() {
       if (!demoRunning) enterDemo();
     };
+  }
+
+  /* ─── vita native overlay (Act III) ─────────────────────────────
+     Only on a stock PS Vita browser: reveal a labeled control that
+     injects HENlo (TheFlow's WebKit + kernel chain, FW 3.65) into THIS
+     page and fires it. The kernel then composites the plasma over the
+     live browser frame, so the DOM page you're reading becomes the
+     backdrop. The ~34KB of exploit JS + ~52KB payload load only here:
+     only on a Vita, only after an explicit tap — every other browser
+     ships zero extra bytes, so the footer's "no dependencies" holds.
+
+     The bundle is served same-origin under vita/ (a deploy-time copy of
+     vita-breakout/henlo). kernel.js reads window.VB_PAYLOAD_URL for the
+     payload so it can sit beside the scripts while we inject them into a
+     page served from elsewhere. */
+  if (navigator.userAgent.indexOf("PlayStation Vita") !== -1) {
+    var vbCtl = document.getElementById("vbVita");
+    var vbRun = document.getElementById("vbRun");
+    if (vbCtl && vbRun) {
+      var VB_BASE = "vita/";   /* relative: resolves beside old.html wherever served */
+      vbCtl.style.display = "block";
+      var vbFired = false;
+      vbRun.onclick = function() {
+        if (vbFired) { return; }
+        vbFired = true;
+        vbRun.firstChild.nodeValue = "▶ loading native overlay…";
+        /* pause the inline plasma — no sense burning the Vita's CPU on
+           innerHTML + Math.sin behind a full-frame kernel overlay */
+        if (plasmaTimer) { clearInterval(plasmaTimer); plasmaTimer = null; }
+        window.VB_PAYLOAD_URL = VB_BASE + "payload.bin";
+        var chain = ["exploit.js", "kernel.js", "jsos.js", "offsets.js"];
+        function loadNext(i) {
+          if (i >= chain.length) {
+            if (typeof go === "function") {
+              go();   /* HENlo entry (exploit.js); the kernel takes over from here */
+            } else {
+              vbRun.firstChild.nodeValue = "▶ chain loaded but go() missing";
+            }
+            return;
+          }
+          var s = document.createElement("script");
+          s.src = VB_BASE + chain[i];
+          s.onload = function() { loadNext(i + 1); };
+          s.onerror = function() {
+            vbRun.firstChild.nodeValue = "▶ couldn't load " + chain[i] + " — is vita/ deployed?";
+            vbFired = false;   /* allow a retry */
+            if (!plasmaTimer) { plasmaTimer = setInterval(tick, 100); }
+          };
+          document.body.appendChild(s);
+        }
+        loadNext(0);
+      };
+    }
   }
 
   /* ─── pip pulse ─────────────────────────────────────────────── */
