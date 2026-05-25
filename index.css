@@ -252,7 +252,9 @@ ul li { margin: 0.15em 0; }
   gap: 4px 14px;
 }
 .notes .d { color: #6b6655; color: var(--muted); }
-.notes .t { color: #d4ceb8; color: var(--ink); }
+/* justify-self:start so the cell hugs the text — otherwise a grid item stretches
+   to fill the 1fr column and the link's dotted border-bottom runs the full width */
+.notes .t { color: #d4ceb8; color: var(--ink); justify-self: start; }
 .notes .s { color: #d4a73e; color: var(--amber); font-size: 12px; }
 /* post titles are links (§4 populated from GreenGale); follow the site link style */
 .notes a.t { color: #d4a73e; color: var(--amber); }
