@@ -254,6 +254,9 @@ ul li { margin: 0.15em 0; }
 .notes .d { color: #6b6655; color: var(--muted); }
 .notes .t { color: #d4ceb8; color: var(--ink); }
 .notes .s { color: #d4a73e; color: var(--amber); font-size: 12px; }
+/* post titles are links (§4 populated from GreenGale); follow the site link style */
+.notes a.t { color: #d4a73e; color: var(--amber); }
+.notes a.t:hover, .notes a.t:focus-visible { color: #ece5c4; color: var(--hi); }
 
 .contact {
   display: grid;

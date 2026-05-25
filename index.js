@@ -222,3 +222,80 @@ window.addEventListener("load", () => {
     if (total > 0) el.textContent = "~" + (total / 1024).toFixed(1) + " KB";
   } catch { /* leave static fallback */ }
 });
+
+/* §4 notes — my published blog posts, read straight from my own PDS.
+   GreenGale stores each post as an `app.greengale.document` record (Markdown in
+   `content`); we read the *public* ones with an unauthenticated listRecords call
+   and link out to the greengale.app permalink. Degrades silently to the static
+   "blog in the works" row in the HTML if GREENGALE_DID is unset or the request
+   fails, so §4 never *depends* on the backend — same philosophy as the counter. */
+(async function () {
+  const el = document.querySelector(".notes");
+  if (!el) return;
+
+  // Hardcode what I control (like COUNTER_URL). Unset DID → keep static fallback.
+  const GREENGALE_DID = "did:plc:xn3l7ogsxym5ixxugidum5dw";  // david.yapfest.club
+  const GREENGALE_PDS = "";   // optional: hardcode PDS host to skip the DID-doc lookup (resolves to yapfest.club)
+  const MAX_POSTS = 6;
+  if (!GREENGALE_DID) return;
+
+  try {
+    const pds = GREENGALE_PDS || (await resolvePds(GREENGALE_DID));
+    if (!pds) return;
+    const url =
+      pds + "/xrpc/com.atproto.repo.listRecords?repo=" +
+      encodeURIComponent(GREENGALE_DID) +
+      "&collection=app.greengale.document&limit=50";
+    const json = await fetch(url).then((r) => r.json());
+    const posts = normalizePosts(json).slice(0, MAX_POSTS);
+    if (posts.length) el.replaceChildren(buildRows(posts));
+  } catch { /* leave the static fallback */ }
+
+  // did:plc → PDS host via the canonical directory. (For did:web, set GREENGALE_PDS.)
+  async function resolvePds(did) {
+    const doc = await fetch("https://plc.directory/" + encodeURIComponent(did))
+      .then((r) => r.json());
+    return (doc.service || []).find((s) => s.id === "#atproto_pds")?.serviceEndpoint;
+  }
+
+  // Shape the raw listRecords payload into what §4 needs. Kept separate so a
+  // future in-page Markdown renderer can reuse it (it also carries `content`).
+  function normalizePosts(json) {
+    return (json.records || [])
+      .map((rec) => {
+        const v = rec.value || {};
+        return {
+          title: v.title || "(untitled)",
+          subtitle: v.subtitle || "",
+          date: (v.publishedAt || "").slice(0, 10),   // ISO → YYYY-MM-DD
+          permalink: (v.url || "") + (v.path || ""),
+          visibility: v.visibility,
+          content: v.content || "",                    // Markdown, unused in v1
+        };
+      })
+      .filter((p) => p.visibility === "public" && /^https:\/\//.test(p.permalink) && p.date)
+      .sort((a, b) => (a.date < b.date ? 1 : -1));      // newest first
+  }
+
+  // date · title→permalink · "read →", one 3-cell row per post in the .notes grid.
+  function buildRows(posts) {
+    const frag = document.createDocumentFragment();
+    for (const p of posts) {
+      const d = document.createElement("span");
+      d.className = "d";
+      d.textContent = p.date;
+
+      const a = document.createElement("a");
+      a.className = "t";
+      a.href = p.permalink;
+      a.textContent = p.title;
+
+      const s = document.createElement("span");
+      s.className = "s";
+      s.textContent = "read →";
+
+      frag.append(d, a, s);
+    }
+    return frag;
+  }
+})();
