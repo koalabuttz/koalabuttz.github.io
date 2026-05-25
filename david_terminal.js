@@ -64,9 +64,8 @@ const page = document.querySelector(".page");
 
 const GREETZ =
   "    *** ~david / full demo *** " +
-  "greetz to: lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-  "sed do eiusmod tempor incididunt, ut labore et dolore magna aliqua, " +
-  "ut enim ad minim veniam. " +
+  "here's to the demoscene that inspired this, and to every machine " +
+  "the world gave up on. " +
   "this entire effect is text characters. no canvas. no images. " +
   "the rainbow is one css gradient. " +
   "press esc or d to return ***    ";

@@ -318,23 +318,23 @@ kbd {
     <span class="ps">less</span>
     <span> ~/david/index.txt</span>
   </div>
-  <div class="right meta">last edit: <b>2026-05-21</b></div>
+  <div class="right meta">last edit: <b>2026-05-24</b></div>
 </div>
 
 <!-- ─── identity ─── -->
 <div class="identity">
   <h1 class="name">DAVID</h1>
   <div class="byline">
-    <em>lorem ipsum</em>
-    <span class="sep">/</span> dolor sit
-    <span class="sep">/</span> amet consectetur
-    <span class="sep">/</span> adipiscing elit
+    <em>david godlewski</em>
+    <span class="sep">/</span> problem solver
+    <span class="sep">/</span> systems &amp; homebrew
+    <span class="sep">/</span> rust on weird hardware
     <span class="sep">&middot;</span> cambridge, ma
   </div>
   <div class="status-line">
     <span class="pip" id="pip"></span>
     <span class="lbl">STATUS</span>
-    lorem ipsum dolor sit amet &mdash; consectetur, adipiscing, elit, sed do
+    open to new roles &mdash; systems, infra, backend, security. say hi in &sect;5.
   </div>
 </div>
 
@@ -364,17 +364,17 @@ kbd {
 </h2>
 
 <p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat.
+I love things that shouldn't work. I've hacked almost every device I
+have. I'm building a roguelike game that I'm squeezing to run on every
+device I can, including the Commodore 64. I do security research that's
+way above my head in my spare time.
 </p>
 
 <p>
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est
-laborum.
+My favorite part of technology is that if something is a computer, then
+I can make it do whatever I want &mdash; even if I don't know how yet.
+There's a small collection of projects below you can take a look at.
+Welcome to my website. I'm glad you're here.
 </p>
 
 <!-- ─── §2 /now ─── -->
@@ -385,10 +385,10 @@ laborum.
 </h2>
 
 <ul>
-  <li>shipping <b>project-alpha</b> across multiple platforms</li>
-  <li>extracting <b>lorem-ipsum</b> &mdash; a framework for dolor sit amet</li>
-  <li>reading <b>consectetur</b> documentation for fun</li>
-  <li>seeking opportunities &mdash; see &sect;5 below</li>
+  <li>building <b>roguelike</b> &mdash; squeezing a Rust dungeon crawler from modern terminals down to the Commodore 64</li>
+  <li>shipped v1 of <b>tailscale-vita</b> &mdash; a from-scratch Tailscale client for the PS Vita</li>
+  <li>wrapped up ~2 years of systems &amp; ops work at a cybersecurity company &mdash; <b>open to new roles</b> (see &sect;5)</li>
+  <li>about to start writing things down &mdash; a blog is on the way</li>
 </ul>
 
 <!-- ─── §3 work ─── -->
@@ -399,35 +399,46 @@ laborum.
 </h2>
 
 <div class="proj">
-  <div class="title">project-alpha &mdash; lorem ipsum dolor sit amet consectetur</div>
-  <div class="meta-line"><span class="arrow">&gt;</span><a href="https://github.com/koalabuttz/project-alpha">github.com/koalabuttz/project-alpha</a></div>
-  <div class="meta-line"><span class="arrow">&gt;</span>tag-one &middot; tag-two &middot; tag-three &middot; tag-four &middot; license</div>
-  <div class="meta-line"><span class="arrow">&gt;</span>v0.1.0 &middot; ~100 commits &middot; ~500 tests &middot; N platforms</div>
+  <div class="title">roguelike &mdash; a cross-platform dungeon crawler, from modern terminals to the Commodore 64</div>
+  <div class="meta-line"><span class="arrow">&gt;</span><a href="https://github.com/koalabuttz/roguelike">github.com/koalabuttz/roguelike</a></div>
+  <div class="meta-line"><span class="arrow">&gt;</span>rust &middot; roguelike &middot; cross-platform &middot; petscii/ascii/ansi &middot; GPL-3.0</div>
+  <div class="meta-line"><span class="arrow">&gt;</span>v0.5.0 &middot; ~460 commits &middot; ~340 tests &middot; linux/macos/windows &middot; c64 &middot; gba &middot; nds</div>
   <p>
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-  veniam, quis nostrud exercitation ullamco <code>laboris</code> nisi ut
-  aliquip ex ea commodo consequat, duis aute irure dolor in reprehenderit
-  in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+  One Rust game engine, three capability tiers &mdash; <b>micro</b> on
+  the Commodore 64, <b>compact</b> on the GBA and DS, <b>standard</b> in
+  a modern terminal &mdash; all sharing a single <code>no_std</code>
+  rules core. Map generation is deterministic across tiers: a seed from
+  the constrained C64 regenerates a byte-identical dungeon on every
+  higher tier, so a run you find on a Commodore 64 replays exactly on
+  your desktop.
   </p>
   <p>
-  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-  officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
-  omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-  totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.
+  Underneath it's a real roguelike &mdash; procedurally generated
+  multi-level dungeons, a 26-slot inventory, and a descent to a win
+  condition. It takes keyboard and gamepad, plays over SSH with no
+  client install, and speaks <code>MCP</code> so an AI can play it
+  headless. Pre-built binaries for Linux, macOS, and Windows; a Game Boy
+  Advance build; and yes, it runs on the C64.
   </p>
 </div>
 
 <div class="proj">
-  <div class="title">project-beta &mdash; placeholder for the second project</div>
-  <div class="meta-line"><span class="arrow">&gt;</span>[in progress] &mdash; lorem ipsum dolor sit amet consectetur</div>
-  <div class="meta-line"><span class="arrow">&gt;</span>tag-one &middot; tag-two &middot; tag-three</div>
+  <div class="title">tailscale-vita &mdash; a from-scratch Tailscale client for the PlayStation Vita</div>
+  <div class="meta-line"><span class="arrow">&gt;</span><a href="https://github.com/koalabuttz/tailscale-vita">github.com/koalabuttz/tailscale-vita</a></div>
+  <div class="meta-line"><span class="arrow">&gt;</span>rust &middot; wireguard &middot; noise &middot; vita &middot; MIT</div>
+  <p>
+  A from-scratch Rust implementation of Tailscale's wire protocols
+  &mdash; Noise IK control, DERP relays, Disco path discovery, and a
+  WireGuard data plane &mdash; so a Vita can join your tailnet at a 100.x
+  address. v1 does direct-path NAT traversal, verified end-to-end at
+  68&nbsp;ms from a Vita on WiFi to a phone on cellular.
+  </p>
 </div>
 
 <div class="proj">
-  <div class="title">project-gamma &mdash; placeholder for the third project</div>
-  <div class="meta-line"><span class="arrow">&gt;</span>consectetur adipiscing elit sed do eiusmod tempor incididunt</div>
-  <div class="meta-line"><span class="arrow">&gt;</span>tag-one &middot; tag-two &middot; tag-three</div>
+  <div class="title">bsky-vita &mdash; a Bluesky (AT Protocol) client for the PS Vita</div>
+  <div class="meta-line"><span class="arrow">&gt;</span>[pre-alpha] &mdash; rust &middot; homebrew &middot; a skeleton so far</div>
+  <div class="meta-line"><span class="arrow">&gt;</span>not published yet &mdash; tinkering in the open soon</div>
 </div>
 
 <!-- ─── §4 notes ─── -->
@@ -438,11 +449,7 @@ laborum.
 </h2>
 
 <table class="notes">
-  <tr><td class="d">2026-04</td><td class="t">lorem ipsum dolor sit amet consectetur</td><td class="s">draft</td></tr>
-  <tr><td class="d">2026-02</td><td class="t">adipiscing elit sed do eiusmod tempor</td><td class="s"></td></tr>
-  <tr><td class="d">2026-01</td><td class="t">incididunt ut labore et dolore magna</td><td class="s"></td></tr>
-  <tr><td class="d">2025-11</td><td class="t">aliqua ut enim ad minim veniam</td><td class="s"></td></tr>
-  <tr><td class="d">2025-09</td><td class="t">quis nostrud exercitation ullamco laboris</td><td class="s"></td></tr>
+  <tr><td class="d">soon</td><td class="t">nothing published yet &mdash; a blog is in the works</td><td class="s">wip</td></tr>
 </table>
 
 <!-- ─── §5 contact ─── -->
@@ -453,25 +460,26 @@ laborum.
 </h2>
 
 <table class="contact">
-  <tr><td class="k">email</td><td class="v">david [at] this domain &mdash; please use the obvious substitution</td></tr>
+  <tr><td class="k">email</td><td class="v">dgodlewski9 [at] gmail [dot] com</td></tr>
   <tr><td class="k">github</td><td class="v"><a href="https://github.com/koalabuttz">github.com/koalabuttz</a></td></tr>
   <tr><td class="k">location</td><td class="v">cambridge, massachusetts (<span id="utc">utc &minus;4</span>)</td></tr>
-  <tr><td class="k">cv</td><td class="v pending">cv.pdf &middot; plain text</td></tr>
+  <tr><td class="k">cv</td><td class="v">available on request &mdash; just email me</td></tr>
 </table>
 
 <p class="contact-note">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua.
+I read everything that lands here. If you're hiring, want to build
+something together, or just feel like nerding out about low-level
+systems and weird hardware &mdash; say hi.
 </p>
 
 <!-- ─── footer ─── -->
 <div class="foot">
   <div class="row">visitors:&nbsp;&nbsp;<span class="counter" id="hits">0000249</span>&nbsp;&nbsp;&middot;&nbsp;&nbsp;press <kbd>D</kbd> for the demo</div>
-  <div class="row"><span class="k">source:</span>   HTML+CSS+JS, no build step, no dependencies, <span id="size">~16 KB</span>.</div>
+  <div class="row"><span class="k">source:</span>   HTML+CSS+JS, no build step, no dependencies, <span id="size">~32 KB</span>.</div>
   <div class="row"><span class="k">fonts:</span>    system mono (no webfont on legacy browsers).</div>
   <div class="row"><span class="k">works in:</span> chrome, firefox, safari, ds-i, vita, wii, wii u, 3ds.</div>
-  <div class="row"><span class="k">rss:</span>      /feed.xml</div>
-  <div class="row" style="margin-top: 8px;">last edit: 2026-05-21 &mdash; david</div>
+  <div class="row"><span class="k">rss:</span>      /feed.xml (soon)</div>
+  <div class="row" style="margin-top: 8px;">last edit: 2026-05-24 &mdash; david</div>
 </div>
 
 <!-- ─── (END) prompt ─── -->
@@ -550,9 +558,8 @@ tempor incididunt ut labore et dolore magna aliqua.
   /* ─── fullscreen demo ───────────────────────────────────────── */
   var GREETZ =
     "    *** ~david / full demo *** " +
-    "greetz to: lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
-    "sed do eiusmod tempor incididunt, ut labore et dolore magna aliqua, " +
-    "ut enim ad minim veniam. " +
+    "here's to the demoscene that inspired this, and to every machine " +
+    "the world gave up on. " +
     "this entire effect is text characters. no canvas. no images. " +
     "the rainbow is per-character spans. " +
     "press esc or d to return ***    ";
