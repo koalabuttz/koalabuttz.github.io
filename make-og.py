@@ -24,7 +24,7 @@ if not os.path.exists(VT323):
 # system monospace for body text
 MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
 
-# ---- palette (from david_terminal.css :root) ----
+# ---- palette (from index.css :root) ----
 BG    = (10, 10, 14)      # #0a0a0e
 INK   = (212, 206, 184)   # #d4ceb8
 MUTED = (107, 102, 85)    # #6b6655
@@ -53,7 +53,7 @@ def rainbow(p):
             return tuple(int(ca[k] + (cb[k] - ca[k]) * t) for k in range(3))
     return STOPS[-1][1]
 
-# ---- plasma (exact port of plasmaFrame from david_terminal.js) ----
+# ---- plasma (exact port of plasmaFrame from index.js) ----
 RAMP = "  .,-:;!=*#%@"
 def plasma_frame(cols, rows, t):
     cx, cy = cols / 2, rows / 2
