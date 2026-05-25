@@ -176,7 +176,7 @@ reducedMotion.addEventListener("change", () => {
 (function () {
   const el = document.getElementById("hits");
   if (!el) return;
-  const COUNTER_URL = "https://davidlewis-counter.koalabuttz.workers.dev/";
+  const COUNTER_URL = "https://davidlewis-backend.koalabuttz.workers.dev/";
   if (!COUNTER_URL) return;
   fetch(COUNTER_URL)
     .then((r) => r.json())
