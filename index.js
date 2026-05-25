@@ -226,30 +226,37 @@ window.addEventListener("load", () => {
 /* §4 notes — my published blog posts, read straight from my own PDS.
    GreenGale stores each post as an `app.greengale.document` record (Markdown in
    `content`); we read the *public* ones with an unauthenticated listRecords call
-   and link out to the greengale.app permalink. Degrades silently to the static
-   "blog in the works" row in the HTML if GREENGALE_DID is unset or the request
-   fails, so §4 never *depends* on the backend — same philosophy as the counter. */
+   and link out to the greengale.app permalink. Three outcomes:
+     • posts found       → render them
+     • reachable, none   → leave the static "blog in the works" row
+     • PDS unreachable    → a "down for maintenance" row, so an outage never reads
+                            as "nothing published". The page itself always loads. */
 (async function () {
   const el = document.querySelector(".notes");
   if (!el) return;
 
   // Hardcode what I control (like COUNTER_URL). Unset DID → keep static fallback.
   const GREENGALE_DID = "did:plc:xn3l7ogsxym5ixxugidum5dw";  // david.yapfest.club
-  const GREENGALE_PDS = "";   // optional: hardcode PDS host to skip the DID-doc lookup (resolves to yapfest.club)
+  const GREENGALE_PDS = "https://yapfest.club";  // my PDS — a fetch failure here = "down for maintenance". Update if I migrate.
   const MAX_POSTS = 6;
   if (!GREENGALE_DID) return;
 
   try {
     const pds = GREENGALE_PDS || (await resolvePds(GREENGALE_DID));
-    if (!pds) return;
+    if (!pds) throw new Error("unresolved PDS");
     const url =
       pds + "/xrpc/com.atproto.repo.listRecords?repo=" +
       encodeURIComponent(GREENGALE_DID) +
       "&collection=app.greengale.document&limit=50";
-    const json = await fetch(url).then((r) => r.json());
-    const posts = normalizePosts(json).slice(0, MAX_POSTS);
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("PDS " + res.status);
+    const posts = normalizePosts(await res.json()).slice(0, MAX_POSTS);
     if (posts.length) el.replaceChildren(buildRows(posts));
-  } catch { /* leave the static fallback */ }
+    // reachable but nothing public yet → leave the static "blog in the works" row.
+  } catch {
+    // PDS unreachable / erroring → say so explicitly instead of looking empty.
+    el.replaceChildren(maintenanceRow());
+  }
 
   // did:plc → PDS host via the canonical directory. (For did:web, set GREENGALE_PDS.)
   async function resolvePds(did) {
@@ -295,6 +302,20 @@ window.addEventListener("load", () => {
       s.textContent = "read →";
 
       frag.append(d, a, s);
+    }
+    return frag;
+  }
+
+  // Shown when my PDS can't be reached — distinct from the "no posts yet" case,
+  // so an outage never masquerades as "nothing published".
+  function maintenanceRow() {
+    const frag = document.createDocumentFragment();
+    const cells = [["d", "—"], ["t", "blog is down for maintenance — back soon"], ["s", "503"]];
+    for (const [cls, text] of cells) {
+      const span = document.createElement("span");
+      span.className = cls;
+      span.textContent = text;
+      frag.append(span);
     }
     return frag;
   }
