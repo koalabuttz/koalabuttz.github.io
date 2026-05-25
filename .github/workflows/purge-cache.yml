@@ -1,0 +1,52 @@
+name: Purge Cloudflare cache
+
+# This site deploys via GitHub Pages from `main` (legacy/branch build) and sits
+# behind Cloudflare, which caches index.js/index.css for ~4h (max-age=14400).
+# So after each Pages build, purge the zone once the new files are live —
+# otherwise visitors can get stale assets until the edge TTL expires.
+#
+# This is ops only: it calls the Cloudflare API after deploy. It does NOT build
+# or transform the site, so the "no build step" promise still holds.
+#
+# Requires two repo secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_ZONE_ID   — the davidlewis.xyz zone id
+#   CLOUDFLARE_API_TOKEN — a token scoped to Zone › Cache Purge for that zone
+# Until both exist, the job logs a notice and exits cleanly (no failures).
+
+on:
+  page_build:          # fires when the Pages site finishes building
+  workflow_dispatch:   # lets you purge manually from the Actions tab
+
+permissions: {}        # we only call an external API; no repo token scopes needed
+
+jobs:
+  purge:
+    # page_build also fires on failed builds — only purge on a good one.
+    if: github.event_name == 'workflow_dispatch' || github.event.build.status == 'built'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Purge cache once the new files have propagated
+        env:
+          CF_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CF_ZONE_ID}" ] || [ -z "${CF_API_TOKEN}" ]; then
+            echo "::notice::CLOUDFLARE_ZONE_ID / CLOUDFLARE_API_TOKEN not set yet — skipping purge."
+            exit 0
+          fi
+
+          # Give GitHub's Fastly origin a moment to serve the freshly built files
+          # before Cloudflare re-fetches them.
+          sleep 15
+
+          resp=$(curl -fsS -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}')
+          echo "$resp"
+
+          # Fail loudly if Cloudflare reports the purge didn't succeed.
+          echo "$resp" | grep -q '"success":true'
+          echo "✓ Cloudflare cache purged."
