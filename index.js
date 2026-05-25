@@ -170,12 +170,20 @@ reducedMotion.addEventListener("change", () => {
   }
 });
 
-/* visitor counter — placeholder, not a real count */
+/* visitor counter — real global count via a tiny Cloudflare Worker (see counter/).
+   Degrades silently to the static number in the HTML if COUNTER_URL is unset or
+   the request fails, so the page never *depends* on the backend being up. */
 (function () {
   const el = document.getElementById("hits");
   if (!el) return;
-  let n = 249;
-  setTimeout(() => { n += 1; el.textContent = String(n).padStart(7, "0"); }, 4000);
+  const COUNTER_URL = "https://davidlewis-counter.koalabuttz.workers.dev/";
+  if (!COUNTER_URL) return;
+  fetch(COUNTER_URL)
+    .then((r) => r.json())
+    .then((d) => {
+      if (Number.isFinite(d.n)) el.textContent = String(d.n).padStart(7, "0");
+    })
+    .catch(() => {});
 })();
 
 /* dynamic timezone offset for Cambridge, MA (America/New_York) */
