@@ -342,19 +342,21 @@ kbd {
 
 <!-- ─── plasma ─── -->
 <div class="plasma-wrap">
-  <pre class="plasma" id="plasma">loading.</pre>
-  <div class="plasma-caption">
-    <span class="h">// PLASMA.RGB</span>
-    40 &times; 8 &middot; ascii only<br>
-    rainbow via per-char spans<br>
-    no canvas &middot; no images<br>
-    press <kbd>D</kbd> for full demo<br>
-    <span class="demo-btn" id="demoBtn">&#9654; launch demo</span>
-    <div id="vbVita" class="vb-vita">
-      <span class="vh">// PS VITA DETECTED</span>
-      <span class="vb-run" id="vbRun">&#9654; paint this page from the kernel</span>
-      <span class="vb-sub">HENlo (TheFlow) &middot; fw 3.65 &middot; RAM-only &middot; O/PS closes it</span>
-    </div>
+  <pre class="plasma" id="plasma"></pre><!-- empty: JS fills it; no-JS/text clients get no stuck "loading." -->
+  <div class="plasma-caption" id="plasmaCap">
+    <!-- The caption text (the // PLASMA.RGB spec lines) is built by JS — see
+         #plasmaCap in the script. It annotates the plasma render, so it stays
+         out of static HTML: the whole plasma window is JS-only, and no-JS/text
+         clients (Lynx) get an empty window instead of a phantom spec. -->
+    <!-- the "press D" hint + launch button are JS-only affordances, injected
+         into #demoCtl below. Text browsers like Lynx (where D is the download
+         key, and a <span> onclick does nothing) then see no dead control. -->
+    <span id="demoCtl"></span>
+    <!-- intentionally empty: the control is built by JS only on a Vita UA,
+         so text browsers (Lynx, w3m) that ignore CSS display:none and run
+         no JS never surface the "PS VITA DETECTED" label. built in the
+         script below, under the PlayStation Vita UA check. -->
+    <div id="vbVita" class="vb-vita"></div>
   </div>
 </div>
 
@@ -476,7 +478,7 @@ systems and weird hardware &mdash; say hi.
 
 <!-- ─── footer ─── -->
 <div class="foot">
-  <div class="row">visitors:&nbsp;&nbsp;<span class="counter" id="hits">0000249</span>&nbsp;&nbsp;&middot;&nbsp;&nbsp;press <kbd>D</kbd> for the demo</div>
+  <div class="row">visitors:&nbsp;&nbsp;<span class="counter" id="hits">0000249</span><span id="demoHintFoot"></span><!-- "· press D for the demo" injected by JS --></div>
   <div class="row"><span class="k">source:</span>   HTML+CSS+JS, no build step, no dependencies, <span id="size">~32 KB</span>.</div>
   <div class="row"><span class="k">fonts:</span>    system mono (no webfont on legacy browsers).</div>
   <div class="row"><span class="k">works in:</span> chrome, firefox, safari, ds-i, vita, wii, wii u, 3ds.</div>
@@ -494,7 +496,9 @@ systems and weird hardware &mdash; say hi.
 <!-- ─── fullscreen demo ─── -->
 <div id="demo">
   <pre id="demoPre"></pre>
-  <div class="exit-msg"><span class="inner">press <kbd>D</kbd> or <kbd>Esc</kbd> to exit &middot; or click anywhere</span></div>
+  <!-- #demo is CSS-hidden until JS; Lynx ignores that and would render the
+       exit hint as stray text, so it's injected into #exitMsg by JS too. -->
+  <div class="exit-msg"><span class="inner" id="exitMsg"></span></div>
 </div>
 
 <script>
@@ -759,11 +763,73 @@ systems and weird hardware &mdash; say hi.
     }
   };
   demo.onclick = exitDemo;
-  var btn = document.getElementById("demoBtn");
-  if (btn) {
+
+  /* Build the demo's affordances here, not in static HTML. The demo is
+     JS-only (the D key + this button), so a text browser like Lynx — where
+     pressing D fires a file download and a <span> onclick is inert — would
+     otherwise show a dead "launch demo" control and a misleading key hint.
+     Injecting them means no-JS clients see neither. Same idea as the Vita
+     control above and the noscript-hidden plasma on index.html, except CSS
+     can't help here: Lynx ignores it, so the gating has to be structural. */
+  function kbd(label) {
+    var k = document.createElement("kbd");
+    k.appendChild(document.createTextNode(label));
+    return k;
+  }
+
+  /* the caption's descriptive lines — annotation for the live plasma, so they
+     belong with it. Without JS there's no plasma to annotate, so a text reader
+     (Lynx) gets an empty window rather than a phantom spec sheet. */
+  var plasmaCap = document.getElementById("plasmaCap");
+  if (plasmaCap) {
+    var capH = document.createElement("span");
+    capH.className = "h";
+    capH.appendChild(document.createTextNode("// PLASMA.RGB"));
+    var capFrag = document.createDocumentFragment();
+    capFrag.appendChild(capH);
+    capFrag.appendChild(document.createTextNode("40 × 8 · ascii only"));
+    capFrag.appendChild(document.createElement("br"));
+    capFrag.appendChild(document.createTextNode("rainbow via per-char spans"));
+    capFrag.appendChild(document.createElement("br"));
+    capFrag.appendChild(document.createTextNode("no canvas · no images"));
+    capFrag.appendChild(document.createElement("br"));
+    plasmaCap.insertBefore(capFrag, plasmaCap.firstChild);
+  }
+
+  var demoCtl = document.getElementById("demoCtl");
+  if (demoCtl) {
+    var hint = document.createElement("span");
+    hint.appendChild(document.createTextNode("press "));
+    hint.appendChild(kbd("D"));
+    hint.appendChild(document.createTextNode(" for full demo"));
+    var btn = document.createElement("span");
+    btn.className = "demo-btn";
+    btn.id = "demoBtn";
+    btn.appendChild(document.createTextNode("▶ launch demo"));
     btn.onclick = function() {
       if (!demoRunning) enterDemo();
     };
+    demoCtl.appendChild(hint);
+    demoCtl.appendChild(document.createElement("br"));
+    demoCtl.appendChild(btn);
+  }
+
+  /* the footer's "· press D for the demo" — same JS-only hint */
+  var demoHintFoot = document.getElementById("demoHintFoot");
+  if (demoHintFoot) {
+    demoHintFoot.appendChild(document.createTextNode("  ·  press "));
+    demoHintFoot.appendChild(kbd("D"));
+    demoHintFoot.appendChild(document.createTextNode(" for the demo"));
+  }
+
+  /* the overlay's exit hint — only meaningful while the demo runs */
+  var exitMsg = document.getElementById("exitMsg");
+  if (exitMsg) {
+    exitMsg.appendChild(document.createTextNode("press "));
+    exitMsg.appendChild(kbd("D"));
+    exitMsg.appendChild(document.createTextNode(" or "));
+    exitMsg.appendChild(kbd("Esc"));
+    exitMsg.appendChild(document.createTextNode(" to exit · or click anywhere"));
   }
 
   /* ─── vita native overlay (Act III) ─────────────────────────────
@@ -781,8 +847,27 @@ systems and weird hardware &mdash; say hi.
      page served from elsewhere. */
   if (navigator.userAgent.indexOf("PlayStation Vita") !== -1) {
     var vbCtl = document.getElementById("vbVita");
-    var vbRun = document.getElementById("vbRun");
-    if (vbCtl && vbRun) {
+    if (vbCtl) {
+      /* Build the control here rather than in static HTML. Text browsers
+         (Lynx, w3m) ignore the CSS display:none that hides it and run no JS,
+         so any markup left in the page would leak the "PS VITA DETECTED"
+         label to every reader. Injecting it only under this Vita-UA branch
+         keeps it truly Vita-only — non-Vita clients get an empty <div> and
+         zero extra bytes, the same spirit as the exploit-bundle gating. */
+      var vbVh = document.createElement("span");
+      vbVh.className = "vh";
+      vbVh.appendChild(document.createTextNode("// PS VITA DETECTED"));
+      var vbRun = document.createElement("span");
+      vbRun.className = "vb-run";
+      vbRun.id = "vbRun";
+      vbRun.appendChild(document.createTextNode("▶ paint this page from the kernel"));
+      var vbSub = document.createElement("span");
+      vbSub.className = "vb-sub";
+      vbSub.appendChild(document.createTextNode("HENlo (TheFlow) · fw 3.65 · RAM-only · O/PS closes it"));
+      vbCtl.appendChild(vbVh);
+      vbCtl.appendChild(vbRun);
+      vbCtl.appendChild(vbSub);
+
       var VB_BASE = "vita/";   /* relative: resolves beside old.html wherever served */
       vbCtl.style.display = "block";
       var vbFired = false;
