@@ -2,16 +2,157 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>standard-reader</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<link rel="canonical" href="https://github.com/koalabuttz/standard-reader">
-<!-- Stopgap: this page is the OAuth client_uri for standard-reader. It redirects to
-     the project's GitHub repo until a proper landing page exists. -->
-<meta http-equiv="refresh" content="0; url=https://github.com/koalabuttz/standard-reader">
+<title>standard-reader &mdash; a terminal reader for standard.site</title>
+<meta name="description" content="standard-reader (sr) — a TUI reader for standard.site long-form writing on the AT Protocol. Read Leaflet, Pckt, Offprint, and GreenGale posts in your terminal, with images, full-text search, and an offline cache.">
+<link rel="canonical" href="https://davidlewis.xyz/standard-reader/">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%230a0a0e'/><text x='8' y='12.5' font-family='ui-monospace,monospace' font-size='13' font-weight='bold' fill='%23d4a73e' text-anchor='middle'>$</text></svg>">
+
+<!-- Open Graph / social preview (shares the site card) -->
+<meta property="og:title" content="standard-reader">
+<meta property="og:description" content="A TUI reader for standard.site — long-form writing on the AT Protocol, in your terminal, with images and an offline cache.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://davidlewis.xyz/standard-reader/">
+<meta property="og:image" content="https://davidlewis.xyz/og.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<!-- reuse the main site's palette + component styles; no build, no extra deps -->
+<link rel="stylesheet" href="../index.css">
+
+<style>
+  /* page-local additions: a boxed terminal block + a links list */
+  .lede { color: #6b6655; color: var(--muted); margin: 2px 0 16px; }
+  .box {
+    border-left: 1px solid #3c3a30;
+    border-left: 1px solid var(--dim);
+    padding: 2px 0 2px 14px;
+    margin: 12px 0 18px;
+    overflow-x: auto;
+  }
+  .box pre { margin: 4px 0; white-space: pre; }
+  .box .pr { color: #50ff80; color: var(--green); }
+  .box .cm { color: #6b6655; color: var(--muted); }
+  .links .row { margin: 3px 0; }
+  .links .k {
+    display: inline-block; min-width: 10ch;
+    color: #3c3a30; color: var(--dim);
+  }
+</style>
 </head>
 <body>
-<p>Redirecting to <a href="https://github.com/koalabuttz/standard-reader">github.com/koalabuttz/standard-reader</a>…</p>
-<script>location.replace("https://github.com/koalabuttz/standard-reader");</script>
+
+<div class="page">
+
+<!-- top prompt -->
+<div class="prompt-bar">
+  <div class="prompt">
+    <span class="pr">$</span>
+    <span class="ps">less</span>
+    <span class="at"> ~/standard-reader/README.md</span>
+  </div>
+  <div class="meta">rev: <b>v1.1.1</b></div>
+</div>
+
+<!-- header -->
+<header class="proj">
+  <div class="title">standard-reader (sr) &mdash; a terminal reader for standard.site</div>
+  <div class="meta-line"><a href="https://github.com/koalabuttz/standard-reader">github.com/koalabuttz/standard-reader</a></div>
+  <div class="meta-line">rust · tui · ratatui · atproto · offline-first · GPL-3.0</div>
+</header>
+
+<!-- §1 about -->
+<h2 class="sec">
+  <span class="num">§1</span>
+  <span class="label">about</span>
+  <span class="rule"></span>
+  <span class="path">~/about</span>
+</h2>
+
+<p>
+A TUI reader for <a href="https://standard.site">standard.site</a> &mdash;
+long-form writing published to the AT&nbsp;Protocol (Leaflet, Pckt, Offprint,
+GreenGale, and anything emitting <code>site.standard.*</code> records). Sign in
+with your atproto account, pull your subscriptions, and read &mdash; with images
+and real formatting, online or off.
+</p>
+<p>
+Add a blog by handle, browse the sidebar &rarr; document list &rarr; reader, and
+read a block-flow with inline + cover images, full-text search, and a command
+palette &mdash; all over an offline <code>redb</code> cache, so anything you've
+opened reads with no network. Six content decoders map every publisher to one
+neutral document model; unknown content degrades to typeset plaintext rather
+than failing. Cycle layouts (one / two / three-pane or a drill-down), pick or
+hand-tune a colour theme, and override either per blog.
+</p>
+<p>
+Under the hood it's a portable core with <b>zero platform dependencies</b>
+&mdash; atproto reads, decoding, caching, and search are written once behind a
+small transport / storage / render seam. The desktop frontend is
+<code>ratatui</code> + <code>reqwest</code> + <code>redb</code>; a planned
+<b>PS&nbsp;Vita</b> frontend reuses all of it.
+</p>
+
+<!-- §2 install -->
+<h2 class="sec">
+  <span class="num">§2</span>
+  <span class="label">install</span>
+  <span class="rule"></span>
+  <span class="path">~/install</span>
+</h2>
+
+<p class="lede">
+Prebuilt binaries (no toolchain) for Linux (x86_64 + aarch64, static musl),
+macOS (Apple Silicon), and Windows &mdash; grab the archive from the latest
+release, unpack, and put <code>sr</code> on your <code>PATH</code>:
+</p>
+
+<div class="box">
+<pre><span class="cm"># prebuilt: download from the releases page, then</span>
+<span class="pr">$</span> tar xzf sr-*.tar.gz &amp;&amp; mv sr ~/.local/bin/
+
+<span class="cm"># or build from source (needs Rust 1.88+)</span>
+<span class="pr">$</span> cargo install --git https://github.com/koalabuttz/standard-reader
+
+<span class="pr">$</span> sr            <span class="cm"># launch the reader</span></pre>
+</div>
+
+<p class="lede">
+Reading needs no account. Signing in (atproto OAuth) mirrors your local
+follow-list to <code>site.standard.graph.subscription</code>.
+</p>
+
+<!-- §3 links -->
+<h2 class="sec">
+  <span class="num">§3</span>
+  <span class="label">links</span>
+  <span class="rule"></span>
+  <span class="path">~/links</span>
+</h2>
+
+<div class="links">
+  <div class="row"><span class="k">repo</span><a href="https://github.com/koalabuttz/standard-reader">github.com/koalabuttz/standard-reader</a></div>
+  <div class="row"><span class="k">releases</span><a href="https://github.com/koalabuttz/standard-reader/releases/latest">latest release</a> &mdash; linux · macos · windows + SHA256SUMS</div>
+  <div class="row"><span class="k">standard</span><a href="https://standard.site">standard.site</a></div>
+  <div class="row"><span class="k">author</span><a href="https://davidlewis.xyz">davidlewis.xyz</a></div>
+</div>
+
+<!-- footer -->
+<footer class="foot">
+  <div class="row"><span class="k">source:</span>   rust · GPL-3.0-or-later · no runtime services</div>
+  <div class="row"><span class="k">page:</span>     HTML+CSS, no build step, no dependencies</div>
+  <div class="row" style="margin-top: 8px;">part of <a href="https://davidlewis.xyz">~david</a> &mdash; back to davidlewis.xyz</div>
+</footer>
+
+<!-- less (END) prompt with blinking cursor -->
+<div class="less-end">
+  <span class="label">(END)</span><span class="colon">:</span><span class="cursor"></span>
+</div>
+
+</div><!-- /page -->
+
 </body>
 </html>
