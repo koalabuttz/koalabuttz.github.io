@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy — Godlewski Board Reader</title>
+<meta name="description" content="Privacy policy for Godlewski Board Reader, a personal, single-user Pinterest connector by David Godlewski.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%230a0a0e'/><text x='8' y='12.5' font-family='ui-monospace,monospace' font-size='13' font-weight='bold' fill='%23d4a73e' text-anchor='middle'>$</text></svg>">
+<style>
+  :root { --bg:#0a0a0e; --fg:#d6d3cb; --accent:#d4a73e; --dim:#8a8578; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font-family:ui-monospace,'Cascadia Code',Menlo,Consolas,monospace;
+         line-height:1.65; font-size:15px; }
+  main { max-width:44rem; margin:0 auto; padding:3rem 1.25rem 4rem; }
+  h1 { color:var(--accent); font-size:1.4rem; margin:0 0 .25rem; }
+  h1::before { content:"$ "; color:var(--dim); }
+  h2 { color:var(--accent); font-size:1.05rem; margin:2rem 0 .5rem; }
+  h2::before { content:"## "; color:var(--dim); }
+  p, li { color:var(--fg); }
+  .meta { color:var(--dim); margin-bottom:2rem; }
+  a { color:var(--accent); }
+  ul { padding-left:1.4rem; }
+  footer { margin-top:3rem; color:var(--dim); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Privacy Policy — Godlewski Board Reader</h1>
+  <p class="meta">Effective July 8, 2026 · <a href="/">davidlewis.xyz</a></p>
+
+  <p>Godlewski Board Reader is a personal, non-commercial software tool
+  operated by David Godlewski ("I", "me"). It is a read-only connector that
+  lets an AI assistant running on my own computer view boards and Pins from
+  my own Pinterest account. I am its only user. This policy describes what
+  the tool does with data, in plain language, because there is genuinely very
+  little to describe.</p>
+
+  <h2>What data the tool accesses</h2>
+  <p>With my explicit authorization through Pinterest's OAuth 2.0 flow, the
+  tool reads — and only reads — the following from my own Pinterest account
+  via the official Pinterest API: my board list, board metadata, Pin metadata
+  (titles, descriptions, links, image references), and my basic account
+  profile. It requests only read scopes and cannot create, modify, or delete
+  anything.</p>
+
+  <h2>What data is stored</h2>
+  <ul>
+    <li><strong>OAuth tokens</strong> are stored encrypted (AES-GCM) on my
+    own computer, with the encryption key held in the operating-system
+    keychain. They are used solely to authenticate API requests.</li>
+    <li><strong>Pinterest content is not persistently stored.</strong> API
+    responses are held in memory only for the duration of a single request
+    and then discarded, consistent with Pinterest's developer guidelines.</li>
+  </ul>
+
+  <h2>What data is shared or sold</h2>
+  <p>Nothing. No data is shared with, sold to, or made accessible to any
+  third party. The tool runs locally on my machine, has no public endpoint,
+  no analytics, no advertising, and no users other than me.</p>
+
+  <h2>Third-party services</h2>
+  <p>The tool communicates only with the official Pinterest API
+  (<a href="https://developers.pinterest.com" rel="noopener">developers.pinterest.com</a>).
+  Pinterest's own <a href="https://policy.pinterest.com/en/privacy-policy"
+  rel="noopener">privacy policy</a> governs data held by Pinterest.</p>
+
+  <h2>Data deletion and revocation</h2>
+  <p>Access can be revoked at any time from Pinterest's connected-apps
+  settings, which immediately invalidates the tool's authorization. Deleting
+  the locally stored tokens removes everything the tool retains.</p>
+
+  <h2>Changes and contact</h2>
+  <p>If this tool ever changes in a way that affects the above, this page
+  will be updated first. Questions: <a href="mailto:dgodlewski9@gmail.com">dgodlewski9@gmail.com</a>.</p>
+
+  <footer>© 2026 David Godlewski · <a href="/">home</a></footer>
+</main>
+</body>
+</html>
