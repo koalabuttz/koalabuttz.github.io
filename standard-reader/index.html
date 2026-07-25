@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>standard-reader &mdash; a terminal reader for standard.site</title>
-<meta name="description" content="standard-reader (sr) — a TUI reader for standard.site long-form writing on the AT Protocol. Read Leaflet, Pckt, Offprint, and GreenGale posts in your terminal, with images, full-text search, and an offline cache.">
+<title>standard-reader &mdash; a reader for standard.site</title>
+<meta name="description" content="standard-reader (sr) — a terminal and browser reader for standard.site long-form writing on the AT Protocol. Read Leaflet, Pckt, Offprint, and GreenGale posts with images, full-text search, and an offline cache.">
 <link rel="canonical" href="https://davidlewis.xyz/standard-reader/">
 
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%230a0a0e'/><text x='8' y='12.5' font-family='ui-monospace,monospace' font-size='13' font-weight='bold' fill='%23d4a73e' text-anchor='middle'>$</text></svg>">
 
 <!-- Open Graph / social preview (shares the site card) -->
 <meta property="og:title" content="standard-reader">
-<meta property="og:description" content="A TUI reader for standard.site — long-form writing on the AT Protocol, in your terminal, with images and an offline cache.">
+<meta property="og:description" content="A terminal and browser reader for standard.site — long-form writing on the AT Protocol, with images and an offline cache.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://davidlewis.xyz/standard-reader/">
 <meta property="og:image" content="https://davidlewis.xyz/og.png">
@@ -36,6 +36,14 @@
   .box pre { margin: 4px 0; white-space: pre; }
   .box .pr { color: #50ff80; color: var(--green); }
   .box .cm { color: #6b6655; color: var(--muted); }
+  .launch {
+    border: 1px solid #3c3a30;
+    border-color: var(--dim);
+    padding: 10px 12px;
+    margin: 16px 0 18px;
+  }
+  .launch .pr { color: #50ff80; color: var(--green); }
+  .launch .cm { color: #6b6655; color: var(--muted); }
   .links .row { margin: 3px 0; }
   .links .k {
     display: inline-block; min-width: 10ch;
@@ -59,9 +67,9 @@
 
 <!-- header -->
 <header class="proj">
-  <div class="title">standard-reader (sr) &mdash; a terminal reader for standard.site</div>
+  <div class="title">standard-reader (sr) &mdash; a terminal + browser reader for standard.site</div>
   <div class="meta-line"><a href="https://github.com/koalabuttz/standard-reader">github.com/koalabuttz/standard-reader</a></div>
-  <div class="meta-line">rust · tui · ratatui · atproto · offline-first · GPL-3.0</div>
+  <div class="meta-line">rust · tui · wasm · ratatui · atproto · offline-first · GPL-3.0</div>
 </header>
 
 <!-- §1 about -->
@@ -88,12 +96,20 @@ neutral document model; unknown content degrades to typeset plaintext rather
 than failing. Cycle layouts (one / two / three-pane or a drill-down), pick or
 hand-tune a colour theme, and override either per blog.
 </p>
+
+<div class="launch">
+  <span class="pr">$</span>
+  <a href="./app/">open the web reader</a>
+  <span class="cm">&mdash; no install; public reading and offline storage are ready</span>
+</div>
+
 <p>
 Under the hood it's a portable core with <b>zero platform dependencies</b>
 &mdash; atproto reads, decoding, caching, and search are written once behind a
-small transport / storage / render seam. The desktop frontend is
-<code>ratatui</code> + <code>reqwest</code> + <code>redb</code>; a planned
-<b>PS&nbsp;Vita</b> frontend reuses all of it.
+small transport / storage / render seam. The desktop shell uses
+<code>ratatui</code> + <code>reqwest</code> + <code>redb</code>; the browser
+shell uses WASM + OPFS and runs the same frontend in a Web Worker. A planned
+<b>PS&nbsp;Vita</b> shell can reuse it too.
 </p>
 
 <!-- §2 install -->
@@ -134,6 +150,7 @@ follow-list to <code>site.standard.graph.subscription</code>.
 </h2>
 
 <div class="links">
+  <div class="row"><span class="k">web</span><a href="./app/">open the web reader</a></div>
   <div class="row"><span class="k">repo</span><a href="https://github.com/koalabuttz/standard-reader">github.com/koalabuttz/standard-reader</a></div>
   <div class="row"><span class="k">releases</span><a href="https://github.com/koalabuttz/standard-reader/releases/latest">latest release</a> &mdash; linux · macos · windows + SHA256SUMS</div>
   <div class="row"><span class="k">standard</span><a href="https://standard.site">standard.site</a></div>
