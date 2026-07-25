@@ -3,11 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="referrer" content="no-referrer" />
+    <!-- Replaced after Trunk generates its inline WASM bootstrap. Keeping the anchor before the
+         Rust asset makes the resulting CSP apply before any script is encountered. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval' 'sha256-QpHhn9MWEEB0nNgud6q0HyALseQoBb8lbOdJFsX5fVk='; style-src 'self' 'unsafe-inline'; connect-src 'self' https:; img-src 'self' blob: data:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
     <title>standard-reader (web)</title>
 
 <script type="module">
-import init, * as bindings from '/standard-reader/app/standard-reader-web-77db6a4d24ec9e7c.js';
-const wasm = await init({ module_or_path: '/standard-reader/app/standard-reader-web-77db6a4d24ec9e7c_bg.wasm' });
+import init, * as bindings from '/standard-reader/app/standard-reader-web-39bad1381baf0866.js';
+const wasm = await init({ module_or_path: '/standard-reader/app/standard-reader-web-39bad1381baf0866_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -17,6 +21,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
 
 </script>
 
+    <script src="/standard-reader/app/register-sw-4633cae3e09324c.js" defer integrity="sha384-1XhBrxrXTW+HLNhR5aqPK6mPPtDNwHgwCIQ6PsLqg6GR6VIS0pFOni/sjeUQoyNd"></script>
     <style>
       html,
       body {
@@ -37,18 +42,6 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
         line-height: 1;
       }
     </style>
-  <link rel="modulepreload" href="/standard-reader/app/standard-reader-web-77db6a4d24ec9e7c.js" crossorigin="anonymous" integrity="sha384-zZWHZLD0tHgm3nH/DjzMIPxZGHTWofsbo2vN8azPpiN1bdNnkmLAEGwIbRiJzl9u"><link rel="modulepreload" href="/standard-reader/app/snippets/standard-reader-web-f74e35292c5f2e76/inline0.js" crossorigin="anonymous" integrity="sha384-3jj4hjF+ebeVFmEEx6/vmoLHz5ZdjBUNuCTSnb7LDH4mXYk6kFpTx0TeFFZetrO7"><link rel="preload" href="/standard-reader/app/standard-reader-web-77db6a4d24ec9e7c_bg.wasm" crossorigin="anonymous" integrity="sha384-FvgFgYLvy9mOeyWek95PnqA1OnW4Vv4mLkGynVHPpvUGMvohwSD01Bymdwdq81zs" as="fetch" type="application/wasm"></head>
-  <body>
-    <script>
-      // The reader's OPFS cache preserves publications and images. The app-scoped service worker
-      // preserves the HTML/JS/WASM shell too, so a previously opened reader can start offline.
-      if ("serviceWorker" in navigator && window.isSecureContext) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch((error) => {
-            console.warn("standard-reader service worker registration failed", error);
-          });
-        });
-      }
-    </script>
-  </body>
+  <link rel="modulepreload" href="/standard-reader/app/standard-reader-web-39bad1381baf0866.js" crossorigin="anonymous" integrity="sha384-LU6MUn2H/XrjS9V2yZhKo06qLFtqbFTUI1bRfK18CcWBWK96Xs3CMyzQjYW79HLb"><link rel="modulepreload" href="/standard-reader/app/snippets/standard-reader-web-f74e35292c5f2e76/inline0.js" crossorigin="anonymous" integrity="sha384-3jj4hjF+ebeVFmEEx6/vmoLHz5ZdjBUNuCTSnb7LDH4mXYk6kFpTx0TeFFZetrO7"><link rel="preload" href="/standard-reader/app/standard-reader-web-39bad1381baf0866_bg.wasm" crossorigin="anonymous" integrity="sha384-8GxSI3J98gK0urejiGK/IlJvzSvHX6z3s21GydwOLCDLXohAXNfOnuhdx/5QW4Fz" as="fetch" type="application/wasm"></head>
+  <body></body>
 </html>
