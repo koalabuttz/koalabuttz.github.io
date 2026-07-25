@@ -6,8 +6,8 @@
     <title>standard-reader (web)</title>
 
 <script type="module">
-import init, * as bindings from '/standard-reader/app/standard-reader-web-be724c802db61515.js';
-const wasm = await init({ module_or_path: '/standard-reader/app/standard-reader-web-be724c802db61515_bg.wasm' });
+import init, * as bindings from '/standard-reader/app/standard-reader-web-e7c4870f56102e94.js';
+const wasm = await init({ module_or_path: '/standard-reader/app/standard-reader-web-e7c4870f56102e94_bg.wasm' });
 
 
 window.wasmBindings = bindings;
@@ -37,7 +37,7 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
         line-height: 1;
       }
     </style>
-  <link rel="modulepreload" href="/standard-reader/app/standard-reader-web-be724c802db61515.js" crossorigin="anonymous" integrity="sha384-oHjxqSmqaF7Xd6iuCKGqWhyLgKqjiHfJJF3BlBFaJShRu36EPk/2MyiffIWrMlkh"><link rel="preload" href="/standard-reader/app/standard-reader-web-be724c802db61515_bg.wasm" crossorigin="anonymous" integrity="sha384-XfAfp1os/QBbmBPuwmFqm3nOfvPKBHNPrMPtisw4PvcHN6W+bKDwwXSjhTHxWN0J" as="fetch" type="application/wasm"></head>
+  <link rel="modulepreload" href="/standard-reader/app/standard-reader-web-e7c4870f56102e94.js" crossorigin="anonymous" integrity="sha384-WUahSm3O5OxawE/KjbtYCc8H8M/NXIl96tUk1rJUAzG6e2TfVy3yabkD7UU/8H2X"><link rel="modulepreload" href="/standard-reader/app/snippets/standard-reader-web-f74e35292c5f2e76/inline0.js" crossorigin="anonymous" integrity="sha384-3jj4hjF+ebeVFmEEx6/vmoLHz5ZdjBUNuCTSnb7LDH4mXYk6kFpTx0TeFFZetrO7"><link rel="preload" href="/standard-reader/app/standard-reader-web-e7c4870f56102e94_bg.wasm" crossorigin="anonymous" integrity="sha384-UXv6hMzR/+iMVSxLmAIZR/GFD02GLeIUjOJ9ntwt2C4b9So4/R7gJZ1K0cBHtWGy" as="fetch" type="application/wasm"></head>
   <body>
     <script>
       // The reader's OPFS cache preserves publications and images. The app-scoped service worker
