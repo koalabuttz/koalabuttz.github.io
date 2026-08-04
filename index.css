@@ -70,7 +70,7 @@ a:focus-visible { outline: 1px dashed #d4a73e; outline: 1px dashed var(--amber);
 pre, code { font: inherit; }
 pre { margin: 0; white-space: pre; }
 
-h1, h2 { font-size: inherit; font-weight: normal; margin: 0; }
+h1, h2, h3 { font-size: inherit; font-weight: normal; margin: 0; }
 p { margin: 0 0 1em; }
 ul { margin: 0 0 1em; padding-left: 1.5em; }
 ul li { margin: 0.15em 0; }
@@ -155,6 +155,19 @@ ul li { margin: 0.15em 0; }
   letter-spacing: 1px;
 }
 
+.jump-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 18px;
+  font-size: 12.5px;
+}
+.jump-nav a::before {
+  content: "./";
+  color: #6b6655;
+  color: var(--muted);
+}
+
 /* ── plasma window with rainbow gradient (background-clip text) ── */
 .plasma-wrap {
   margin: 28px 0 10px;
@@ -231,6 +244,15 @@ ul li { margin: 0.15em 0; }
 .sec .path  { color: #6b6655; color: var(--muted); font-family: monospace; font-family: var(--mono); font-size: 12px; letter-spacing: 0; }
 
 /* ── content blocks ────────────────────────────────────────────── */
+.systems {
+  display: grid;
+  grid-template-columns: 14ch 1fr;
+  gap: 5px 14px;
+}
+.systems .k { color: #6b6655; color: var(--muted); }
+.systems .v { color: #d4ceb8; color: var(--ink); }
+.systems-note { margin-top: 14px; }
+
 .proj { margin: 16px 0 22px; }
 .proj .title {
   font-family: "VT323", monospace;
@@ -245,6 +267,28 @@ ul li { margin: 0.15em 0; }
 .proj .meta-line { color: #6b6655; color: var(--muted); }
 .proj .meta-line::before { content: "  > "; color: #3c3a30; color: var(--dim); }
 .proj p { margin: 10px 0; }
+
+.subhead {
+  margin: 26px 0 10px;
+  color: #ece5c4;
+  color: var(--hi);
+  font-family: "VT323", monospace;
+  font-family: var(--pixel);
+  font-size: 23px;
+  letter-spacing: 0.5px;
+}
+.subhead::before {
+  content: "// ";
+  color: #00e5ff;
+  color: var(--cyan);
+}
+.more-projects {
+  display: grid;
+  grid-template-columns: 18ch 1fr;
+  gap: 7px 14px;
+}
+.more-projects a { justify-self: start; }
+.more-projects span { color: #6b6655; color: var(--muted); }
 
 .notes {
   display: grid;
@@ -267,6 +311,7 @@ ul li { margin: 0.15em 0; }
 }
 .contact .k { color: #6b6655; color: var(--muted); }
 .contact .v { color: #d4ceb8; color: var(--ink); }
+.contact .v, .more-projects span { overflow-wrap: anywhere; }
 .contact .v.pending { color: #6b6655; color: var(--muted); }
 .contact-note {
   color: #6b6655;
@@ -392,8 +437,11 @@ kbd {
   .sec .path { display: none; }
   .proj .title { font-size: 15px; }
   .plasma-caption .h { font-size: 13px; }
-  .notes { grid-template-columns: 8ch 1fr; }
-  .notes .s { grid-column: 2; padding-left: 0; }
+  .jump-nav { gap: 5px 12px; }
+  .systems, .more-projects { grid-template-columns: 1fr; gap: 2px; }
+  .systems .v, .more-projects span { margin-bottom: 7px; }
+  .notes { grid-template-columns: 10ch minmax(0, 1fr) auto; gap: 4px 8px; }
+  .notes .s { grid-column: auto; padding-left: 0; }
   .contact { grid-template-columns: 9ch 1fr; }
 }
 

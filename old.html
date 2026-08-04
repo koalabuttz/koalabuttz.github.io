@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>~david</title>
+<title>David Godlewski — Systems Administrator &amp; Technical Generalist</title>
+<meta name="description" content="Systems administrator and technical generalist in Cambridge, MA. Windows and Linux infrastructure, automation, networking, Rust, and homebrew systems projects.">
 <link rel="alternate" type="application/atom+xml" title="~david &mdash; notes" href="/feed.xml">
 <link rel="alternate" type="application/rss+xml" title="~david &mdash; notes" href="/rss.xml">
 <style>
@@ -24,7 +25,7 @@ body {
   padding: 0 18px 64px;
 }
 
-h1, h2 { font-weight: normal; margin: 0; }
+h1, h2, h3 { font-weight: normal; margin: 0; }
 p { margin: 0 0 1em; }
 ul { margin: 0 0 1em; padding-left: 1.5em; }
 ul li { margin: 2px 0; }
@@ -85,6 +86,13 @@ h1.name {
   letter-spacing: 1px;
   margin-right: 8px;
 }
+.jump-nav {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 2;
+}
+.jump-nav a { margin-right: 14px; white-space: nowrap; }
+.jump-nav a:before { content: "./"; color: #6b6655; }
 
 /* ── plasma window ────────────────────────────────────────────── */
 .plasma-wrap { margin: 28px 0 10px; }
@@ -163,7 +171,20 @@ h2.sec .num { color: #d4a73e; font-size: 22px; margin-right: 8px; }
 h2.sec .label { color: #00e5ff; font-size: 26px; margin-right: 10px; }
 h2.sec .path { color: #6b6655; font-size: 12px; float: right; line-height: 30px; }
 
-/* ── projects ─────────────────────────────────────────────────── */
+/* ── systems + projects ───────────────────────────────────────── */
+table.systems, table.more-projects {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+table.systems td, table.more-projects td {
+  padding: 2px 14px 2px 0;
+  vertical-align: top;
+}
+table.systems td.k { color: #6b6655; width: 105px; }
+table.systems td.v { color: #d4ceb8; }
+.systems-note { margin-top: 14px; }
+
 .proj { margin: 16px 0 22px; }
 .proj .title {
   font-size: 15px;
@@ -175,6 +196,15 @@ h2.sec .path { color: #6b6655; font-size: 12px; float: right; line-height: 30px;
 .proj .meta-line { color: #6b6655; padding-left: 14px; font-size: 12px; }
 .proj .meta-line .arrow { color: #3c3a30; margin-right: 4px; }
 .proj p { margin: 10px 0; }
+.subhead {
+  margin: 26px 0 10px;
+  color: #ece5c4;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+.subhead:before { content: "// "; color: #00e5ff; }
+table.more-projects td:first-child { width: 135px; }
+table.more-projects td:last-child { color: #6b6655; }
 
 code {
   font-family: monospace;
@@ -306,6 +336,8 @@ kbd {
     padding-top: 10px;
     margin-top: 10px;
   }
+  table.systems td, table.more-projects td { display: block; width: auto; padding-right: 0; }
+  table.systems td.v, table.more-projects td:last-child { padding-bottom: 7px; }
 }
 </style>
 </head>
@@ -320,7 +352,7 @@ kbd {
     <span class="ps">less</span>
     <span> ~/david/index.txt</span>
   </div>
-  <div class="right meta">last edit: <b>2026-05-25</b></div>
+  <div class="right meta">last edit: <b>2026-08-04</b></div>
 </div>
 
 <!-- ─── identity ─── -->
@@ -328,15 +360,23 @@ kbd {
   <h1 class="name">DAVID</h1>
   <div class="byline">
     <em>david godlewski</em>
-    <span class="sep">/</span> problem solver
-    <span class="sep">/</span> systems &amp; homebrew
+    <span class="sep">/</span> systems administrator
+    <span class="sep">/</span> technical generalist
     <span class="sep">/</span> rust on weird hardware
     <span class="sep">&middot;</span> cambridge, ma
   </div>
   <div class="status-line">
     <span class="pip" id="pip"></span>
     <span class="lbl">STATUS</span>
-    open to new roles &mdash; systems, infra, backend, security. say hi in &sect;5.
+    open to systems administration, IT operations, infrastructure, and junior software engineering roles.
+  </div>
+  <div class="jump-nav">
+    <a href="#about">about</a>
+    <a href="#systems">systems</a>
+    <a href="#projects">projects</a>
+    <a href="#now">now</a>
+    <a href="#notes">notes</a>
+    <a href="#contact">contact</a>
   </div>
 </div>
 
@@ -361,93 +401,147 @@ kbd {
 </div>
 
 <!-- ─── §1 about ─── -->
-<h2 class="sec">
+<h2 class="sec" id="about">
   <span class="num">&sect;1</span>
   <span class="label">about</span>
   <span class="path">~/about</span>
 </h2>
 
 <p>
-I love things that shouldn't work. I've hacked almost every device I
-have. I'm building a roguelike game that I'm squeezing to run on every
-device I can, including the Commodore 64. I do security research that's
-way above my head in my spare time.
+I like making computers do things they were never supposed to do.
+Sometimes that means putting Tailscale on a PlayStation Vita. Sometimes
+it means squeezing a Rust roguelike onto a Commodore 64. Usually it means
+disappearing down a rabbit hole until the weird idea actually works.
 </p>
 
 <p>
-My favorite part of technology is that if something is a computer, then
-I can make it do whatever I want &mdash; even if I don't know how yet.
-There's a small collection of projects below you can take a look at.
-Welcome to my website. I'm glad you're here.
+Professionally, I've done systems administration across Windows, Linux,
+and macOS &mdash; servers, identity, virtualization, monitoring,
+networking, automation, and all the documentation that keeps everything
+from becoming folklore.
 </p>
 
-<!-- ─── §2 /now ─── -->
-<h2 class="sec">
+<p>
+I tend to bounce between systems, software, security, and weird
+hardware. &ldquo;Technical generalist&rdquo; is the term I use to
+describe myself. I like learning unfamiliar systems, fixing what's
+broken, and automating the annoying parts. Right now I'm looking for
+systems administration, IT/infrastructure, or junior software
+engineering work where that kind of curiosity is useful.
+</p>
+
+<p>
+There's a collection of things I've built below. Welcome to my website.
+I'm glad you're here.
+</p>
+
+<!-- ─── §2 systems ─── -->
+<h2 class="sec" id="systems">
   <span class="num">&sect;2</span>
-  <span class="label">/now</span>
-  <span class="path">updated 2026-05</span>
+  <span class="label">systems</span>
+  <span class="path">~/systems</span>
 </h2>
 
-<ul>
-  <li>building <b>roguelike</b> &mdash; squeezing a Rust dungeon crawler from modern terminals down to the Commodore 64</li>
-  <li>shipped v1 of <b>tailscale-vita</b> &mdash; a from-scratch Tailscale client for the PS Vita</li>
-  <li>wrapped up ~2 years of systems &amp; ops work at a cybersecurity company &mdash; <b>open to new roles</b> (see &sect;5)</li>
-  <li>about to start writing things down &mdash; a blog is on the way</li>
-</ul>
+<table class="systems">
+  <tr><td class="k">infrastructure</td><td class="v">Windows Server &middot; Linux &middot; macOS &middot; Proxmox &middot; Hyper-V &middot; ZFS &middot; Docker/LXC</td></tr>
+  <tr><td class="k">identity</td><td class="v">Active Directory &middot; Entra ID &middot; Group Policy &middot; Intune &middot; Microsoft 365</td></tr>
+  <tr><td class="k">networking</td><td class="v">TCP/IP &middot; DNS &middot; WireGuard &middot; Tailscale &middot; PRTG &middot; Wazuh</td></tr>
+  <tr><td class="k">automation</td><td class="v">PowerShell &middot; Bash &middot; Python &middot; Rust &middot; Ansible &middot; OpenTofu</td></tr>
+</table>
 
-<!-- ─── §3 work ─── -->
-<h2 class="sec">
+<p class="systems-note">
+At ThreatLocker, I administered a 16-server cross-platform environment,
+built PowerShell and Bash automation supporting 250+ applications, and
+worked across identity, monitoring, recovery, capacity planning, and
+operational documentation.
+</p>
+
+<p class="systems-note">
+At home, I run a Dell PowerEdge Proxmox server and a dedicated ZFS NAS
+with containers, configuration management, monitoring, VPN access, and
+tested backup and recovery.
+</p>
+
+<!-- ─── §3 projects ─── -->
+<h2 class="sec" id="projects">
   <span class="num">&sect;3</span>
-  <span class="label">work</span>
-  <span class="path">~/work</span>
+  <span class="label">projects</span>
+  <span class="path">~/projects</span>
 </h2>
 
 <div class="proj">
-  <div class="title">roguelike &mdash; a cross-platform dungeon crawler, from modern terminals to the Commodore 64</div>
-  <div class="meta-line"><span class="arrow">&gt;</span><a href="https://github.com/koalabuttz/roguelike">github.com/koalabuttz/roguelike</a></div>
-  <div class="meta-line"><span class="arrow">&gt;</span>rust &middot; roguelike &middot; cross-platform &middot; petscii/ascii/ansi &middot; GPL-3.0</div>
-  <div class="meta-line"><span class="arrow">&gt;</span>v0.5.0 &middot; ~460 commits &middot; ~340 tests &middot; linux/macos/windows &middot; c64 &middot; gba &middot; nds</div>
+  <div class="title">tailscale-vita &mdash; a Tailscale client for the PlayStation Vita</div>
+  <div class="meta-line"><span class="arrow">&gt;</span><a href="https://github.com/koalabuttz/tailscale-vita">github.com/koalabuttz/tailscale-vita</a></div>
+  <div class="meta-line"><span class="arrow">&gt;</span>rust &middot; wireguard &middot; noise ik &middot; derp &middot; stun &middot; vita &middot; MIT</div>
   <p>
-  One Rust game engine, three capability tiers &mdash; <b>micro</b> on
-  the Commodore 64, <b>compact</b> on the GBA and DS, <b>standard</b> in
-  a modern terminal &mdash; all sharing a single <code>no_std</code>
-  rules core. Map generation is deterministic across tiers: a seed from
-  the constrained C64 regenerates a byte-identical dungeon on every
-  higher tier, so a run you find on a Commodore 64 replays exactly on
-  your desktop.
-  </p>
-  <p>
-  Underneath it's a real roguelike &mdash; procedurally generated
-  multi-level dungeons, a 26-slot inventory, and a descent to a win
-  condition. It takes keyboard and gamepad, plays over SSH with no
-  client install, and speaks <code>MCP</code> so an AI can play it
-  headless. Pre-built binaries for Linux, macOS, and Windows; a Game Boy
-  Advance build; and yes, it runs on the C64.
+  A Rust implementation of the Tailscale protocol stack for Vita:
+  Noise IK control, DERP relays, Disco path discovery, a WireGuard data
+  plane, ACL enforcement, and direct-path NAT traversal. A Vita on Wi-Fi
+  reached a phone on cellular over a 68&nbsp;ms direct UDP path.
   </p>
 </div>
 
 <div class="proj">
-  <div class="title">tailscale-vita &mdash; a from-scratch Tailscale client for the PlayStation Vita</div>
-  <div class="meta-line"><span class="arrow">&gt;</span><a href="https://github.com/koalabuttz/tailscale-vita">github.com/koalabuttz/tailscale-vita</a></div>
-  <div class="meta-line"><span class="arrow">&gt;</span>rust &middot; wireguard &middot; noise &middot; vita &middot; MIT</div>
+  <div class="title">standard-reader (sr) &mdash; a terminal reader for standard.site long-form writing on the AT Protocol</div>
+  <div class="meta-line"><span class="arrow">&gt;</span><a href="/standard-reader/app/">try the web reader</a> &middot; <a href="https://github.com/koalabuttz/standard-reader">github.com/koalabuttz/standard-reader</a></div>
+  <div class="meta-line"><span class="arrow">&gt;</span>rust &middot; tui &middot; wasm &middot; atproto oauth &middot; offline-first &middot; GPL-3.0</div>
   <p>
-  A from-scratch Rust implementation of Tailscale's wire protocols
-  &mdash; Noise IK control, DERP relays, Disco path discovery, and a
-  WireGuard data plane &mdash; so a Vita can join your tailnet at a 100.x
-  address. v1 does direct-path NAT traversal, verified end-to-end at
-  68&nbsp;ms from a Vita on WiFi to a phone on cellular.
+  A cross-platform, offline-first reader with terminal and browser/WASM
+  frontends. It handles six publishing formats, full-text search, images,
+  OAuth-backed subscriptions, and prebuilt releases for Linux, macOS, and
+  Windows over one portable Rust core.
   </p>
 </div>
 
 <div class="proj">
   <div class="title">bsky-vita &mdash; a Bluesky (AT Protocol) client for the PS Vita</div>
-  <div class="meta-line"><span class="arrow">&gt;</span>[pre-alpha] &mdash; rust &middot; homebrew &middot; a skeleton so far</div>
-  <div class="meta-line"><span class="arrow">&gt;</span>not published yet &mdash; tinkering in the open soon</div>
+  <div class="meta-line"><span class="arrow">&gt;</span><a href="https://github.com/koalabuttz/bsky-vita">github.com/koalabuttz/bsky-vita</a></div>
+  <div class="meta-line"><span class="arrow">&gt;</span>rust &middot; at protocol &middot; oauth &middot; hardware video &middot; homebrew &middot; GPL-3.0</div>
+  <p>
+  Browse feeds, post image threads with alt text, watch color video with
+  hardware H.264 decoding, send DMs, and sign in through OAuth
+  (PAR/PKCE/DPoP) or an app password. It ships as one installable VPK.
+  </p>
 </div>
 
-<!-- ─── §4 notes ─── -->
-<h2 class="sec">
+<div class="proj">
+  <div class="title">roguelike &mdash; a cross-platform dungeon crawler, from modern terminals to the Commodore 64</div>
+  <div class="meta-line"><span class="arrow">&gt;</span><a href="https://github.com/koalabuttz/roguelike">github.com/koalabuttz/roguelike</a></div>
+  <div class="meta-line"><span class="arrow">&gt;</span>rust &middot; no_std &middot; ssh &middot; mcp &middot; c64 &middot; gba &middot; nds &middot; GPL-3.0</div>
+  <p>
+  One portable rules core scales from modern terminals down to the C64,
+  GBA, and Nintendo DS. It includes deterministic dungeon generation,
+  an SSH server, native console builds, and an MCP interface that lets
+  an AI play headlessly.
+  </p>
+</div>
+
+<h3 class="subhead">more projects</h3>
+<table class="more-projects">
+  <tr><td><a href="https://github.com/koalabuttz/ksa64">KSA64</a></td><td>deterministic aerospace simulation and mission operations for the Commodore 64</td></tr>
+  <tr><td><a href="https://tangled.org/david.yapfest.club/prompt64">Prompt64</a></td><td>native C64 terminal for monitoring and controlling coding agents</td></tr>
+  <tr><td><a href="https://tangled.org/david.yapfest.club/ultimate-tool">Ultimate Tool</a></td><td>hardware-in-the-loop C64 development, testing, and evidence platform</td></tr>
+  <tr><td><a href="https://tangled.org/david.yapfest.club/c64-ultimate">C64 Ultimate skill</a></td><td>safe, evidence-backed automation for C64 Ultimate hardware</td></tr>
+  <tr><td><a href="https://github.com/koalabuttz/ssid-emoji-unblock">ssid-emoji-unblock</a></td><td>Vita plugin that removes the Settings UI's emoji-SSID validation gate</td></tr>
+</table>
+
+<!-- ─── §4 /now ─── -->
+<h2 class="sec" id="now">
   <span class="num">&sect;4</span>
+  <span class="label">/now</span>
+  <span class="path">updated 2026-08</span>
+</h2>
+
+<ul>
+  <li>building <b>Ultimate Tool</b> &mdash; making ambitious C64 projects easier to test on emulators and real hardware</li>
+  <li>maintaining <b>standard-reader</b>, <b>tailscale-vita</b>, and <b>bsky-vita</b></li>
+  <li>experimenting with coding-agent workflows on the C64 through <b>Prompt64</b></li>
+  <li>looking for systems administration, IT/infrastructure, or junior software engineering roles</li>
+</ul>
+
+<!-- ─── §5 notes ─── -->
+<h2 class="sec" id="notes">
+  <span class="num">&sect;5</span>
   <span class="label">notes</span>
   <span class="path">~/notes</span>
 </h2>
@@ -456,9 +550,9 @@ Welcome to my website. I'm glad you're here.
   <tr><td class="d">soon</td><td class="t">nothing published yet &mdash; a blog is in the works</td><td class="s">wip</td></tr>
 </table>
 
-<!-- ─── §5 contact ─── -->
-<h2 class="sec">
-  <span class="num">&sect;5</span>
+<!-- ─── §6 contact ─── -->
+<h2 class="sec" id="contact">
+  <span class="num">&sect;6</span>
   <span class="label">contact</span>
   <span class="path">~/contact</span>
 </h2>
@@ -466,8 +560,9 @@ Welcome to my website. I'm glad you're here.
 <table class="contact">
   <tr><td class="k">email</td><td class="v">dgodlewski9 [at] gmail [dot] com</td></tr>
   <tr><td class="k">github</td><td class="v"><a href="https://github.com/koalabuttz">github.com/koalabuttz</a></td></tr>
+  <tr><td class="k">tangled</td><td class="v"><a href="https://tangled.org/david.yapfest.club">tangled.org/david.yapfest.club</a></td></tr>
+  <tr><td class="k">linkedin</td><td class="v"><a href="https://www.linkedin.com/in/davidlewisgodlewski/">linkedin.com/in/davidlewisgodlewski</a></td></tr>
   <tr><td class="k">location</td><td class="v">cambridge, massachusetts (<span id="utc">utc &minus;4</span>)</td></tr>
-  <tr><td class="k">cv</td><td class="v">available on request &mdash; just email me</td></tr>
 </table>
 
 <p class="contact-note">
@@ -483,7 +578,7 @@ systems and weird hardware &mdash; say hi.
   <div class="row"><span class="k">fonts:</span>    system mono (no webfont on legacy browsers).</div>
   <div class="row"><span class="k">works in:</span> chrome, firefox, safari, ds-i, vita, wii, wii u, 3ds.</div>
   <div class="row"><span class="k">rss:</span>      <a href="/feed.xml">/feed.xml</a> (atom) &middot; <a href="/rss.xml">/rss.xml</a> (rss)</div>
-  <div class="row" style="margin-top: 8px;">last edit: 2026-05-25 &mdash; david</div>
+  <div class="row" style="margin-top: 8px;">last edit: 2026-08-04 &mdash; david</div>
 </div>
 
 <!-- ─── (END) prompt ─── -->

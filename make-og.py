@@ -83,7 +83,7 @@ x = MX
 for txt, col in [("$ ", AMBER), ("less", GREEN), (" ~/david/index.txt", MUTED)]:
     d.text((x, pb_y), txt, font=fm, fill=col)
     x += d.textlength(txt, font=fm)
-meta = "last edit: 2026-05-24"
+meta = "last edit: 2026-08-04"
 fm2 = f_mono(22)
 d.text((W - MX - d.textlength(meta, font=fm2), pb_y + 4), meta, font=fm2, fill=DIM)
 # thin rule under prompt bar
@@ -109,8 +109,8 @@ d.text((tx, ty), title, font=ft, fill=INK)
 
 # ===== byline (auto-fit to width) =====
 by_y = ty + 250
-segs = [("david godlewski", INK), ("  /  ", DIM), ("problem solver", MUTED),
-        ("  /  ", DIM), ("systems & homebrew", MUTED),
+segs = [("david godlewski", INK), ("  /  ", DIM), ("systems administrator", MUTED),
+        ("  /  ", DIM), ("technical generalist", MUTED),
         ("  /  ", DIM), ("rust on weird hardware", MUTED),
         ("  ·  ", DIM), ("cambridge, ma", MUTED)]
 bsz = 23
@@ -132,7 +132,7 @@ d.ellipse([(MX, st_y + 6), (MX + 11, st_y + 17)], fill=GREEN)
 x = MX + 24
 d.text((x, st_y), "STATUS ", font=fs, fill=AMBER)
 x += d.textlength("STATUS ", font=fs)
-d.text((x, st_y), "open to new roles — systems, infra, backend, security.", font=fs, fill=INK)
+d.text((x, st_y), "open to systems, IT, infrastructure, and junior software engineering.", font=fs, fill=INK)
 
 # ===== rainbow ASCII plasma block (fills width, sits inside bottom margin) =====
 fp = f_mono(20)
